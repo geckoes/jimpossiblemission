@@ -1,0 +1,9 @@
+filename,x,y,w,h
+background.png,0,0,8,8
+lift.png,0,0,24,8
+lift_piece.png,0,0,8,8
+platform_dx.png,0,0,8,8
+platform_full.png,0,0,16,8
+platform_sx.png,0,0,8,8
+tilesource-mask.png,0,0,48,8
+tilesource.png,0,0,48,8

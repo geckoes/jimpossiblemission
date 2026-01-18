@@ -1,0 +1,5 @@
+filename,x,y,w,h
+elevator-back.png,14,6,36,50
+elevator-bottom.png,0,0,64,8
+elevator-front.png,8,0,48,96
+elevator-top.png,0,0,64,8
