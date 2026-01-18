@@ -10,6 +10,7 @@ import java.util.Observable;
 import javax.swing.Timer;
 
 import jimpossiblemission.model.ImpossibleMission;
+import jimpossiblemission.model.game.GameModel;
 import jimpossiblemission.view.GamePanel;
 
 /**
@@ -26,10 +27,10 @@ public class GameController extends Observable
     Timer gameTimer;
 
     /**
-     * @param model
+     * @param gm
      * @param gp
      */
-    public GameController(ImpossibleMission model, GamePanel gp)
+    public GameController(GameModel gm, GamePanel gp)
     {
         ActionListener gamePerformer = new ActionListener()
         {

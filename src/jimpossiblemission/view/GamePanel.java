@@ -40,7 +40,6 @@ public class GamePanel extends JPanel implements Observer
         player.setController(keyH);
         decorationPlayer = new DecoratorPlayer(player, "hitboxes.csv", "/Sprites/Player/Running/");
         // decorationPlayer.addObserver(player);
-
     }
 
     public void paintComponent(Graphics g)

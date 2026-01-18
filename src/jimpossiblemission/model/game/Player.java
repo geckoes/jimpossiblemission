@@ -48,15 +48,8 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     }
     
     @Override
-    public void update(Observable o, Object arg)
-    {
-        jump();
-        walk();
-    }
-    @Override
     public void update()
     {
-        
         jump();
         walk();
     }
@@ -74,31 +67,31 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     {
         switch (gameplayController.getDirection()) {
             case Direction.UP:
-                System.out.println("UP");
+                System.out.println("Player UP");
                 direction = "up";
                 isMoving = true;
                 y -= speed;
                 break;
             case Direction.DOWN:
-                System.out.println("DOWN");
+                System.out.println("Player DOWN");
                 direction = "down";
                 isMoving = true;
                 y+= speed;
                 break;
             case Direction.LEFT:
-                System.out.println("LEFT");
+                System.out.println("Player LEFT");
                 direction = "left";
                 isMoving = true;
                 x -= speed;
                 break;
             case Direction.RIGHT:
-                System.out.println("RIGHT");
+                System.out.println("Player RIGHT");
                 direction = "right";
                 isMoving = true;
                 x += speed;
                 break;
             case Direction.SPACE:
-                System.out.println("SPACE");
+                System.out.println("Player SPACE");
                 direction = "jump";
                 isMoving = true;
                 jump();
@@ -121,4 +114,9 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     {
        
     }
+	@Override
+	public void update(Observable o, Object arg) {
+        jump();
+        walk();		
+	}
 }

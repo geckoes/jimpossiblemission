@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JPanel;
+
 import jimpossiblemission.controller.GamePlayController;
 import jimpossiblemission.controller.KeyboardController;
 import jimpossiblemission.model.game.GameModel;
@@ -16,7 +18,7 @@ import jimpossiblemission.model.game.Player;
  * @author Filippo Taiuti
  *
  */
-public class Play extends GamePanel implements Observer
+public class Play extends JPanel implements Observer
 {
     // SCREEN SETTINGS
     public final static int originalTileSize = 32;
@@ -39,13 +41,14 @@ public class Play extends GamePanel implements Observer
      */
     public Play(Navigator navigator)
     {
+    	
         setLayout(new BorderLayout());
 
         this.navigator = navigator;
 
         GameModel model = new GameModel();
 
-        GamePanel gp = new GamePanel();
+        GamePanel gp = new GamePanel(navigator);
         GamePlayController gpController = new KeyboardController();
 //    gp.addKeyListener(keyController); 
         Player pl = new Player(playerX, playerY, spriteSize, spriteSize, playerSpeed);
@@ -53,7 +56,7 @@ public class Play extends GamePanel implements Observer
         add(gp);
     }
 
-    public GamePanel gamePanel()
+    public JPanel gamePanel()
     {
         return this;
     }

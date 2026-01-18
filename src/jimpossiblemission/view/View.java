@@ -14,6 +14,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+/**
+ * 
+ * @author Filippo Taiuti
+ */
 @SuppressWarnings("deprecation")
 public class View extends JFrame implements Observer
 {

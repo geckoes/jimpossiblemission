@@ -1,12 +1,15 @@
 package jimpossiblemission.controller;
 
+import java.io.IOException;
+import java.util.Observer;
 import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import jimpossiblemission.model.Game;
+import jimpossiblemission.model.game.GameModel;
+import jimpossiblemission.model.game.Player;
 import jimpossiblemission.model.ImpossibleMission;
 import jimpossiblemission.view.View;
 
@@ -21,7 +24,7 @@ public class Controller
 {
     private Optional<ScheduledFuture<?>> timer;
     private ScheduledExecutorService scheduler;
-    private Optional<Game> game;
+    private Optional<jimpossiblemission.model.Game> gameMine;
 
     /**
      * Class constructor.
@@ -34,27 +37,41 @@ public class Controller
 
         view.menu().playMine().addActionListener(e ->
         {
-            Game game = new Game();
+        	jimpossiblemission.model.Game game = new jimpossiblemission.model.Game();
 
             game.addObserver(model);
             game.addObserver(view.playMine());
             game.addObserver(view.play());
             game.start();
 
-            this.game = Optional.of(game);
+            gameMine = Optional.of(game);
             timer = Optional.of(scheduler.scheduleAtFixedRate(() -> game.update(), 1, 1, TimeUnit.SECONDS));
         });
 
         view.playMine().end().addActionListener(e ->
         {
             timer.ifPresent(t -> t.cancel(true));
-            game.ifPresent(Game::end);
+            gameMine.ifPresent(jimpossiblemission.model.Game::end);
         });
 
         view.menu().play().addActionListener(e ->
         {
-
-            System.out.println("Go go go");
+        	Player pl = new Player(0, 0, 0, 0, 0);
+        	try {
+				view.play().addPlayer(pl);
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+        	KeyboardController keyb = new KeyboardController();
+//        	pl.setController(keyb);
+        	view.play().addKeyListener(keyb);
+        	GameModel gm = new GameModel();
+        	GameController gc = new GameController(gm, view.play());
+            gc.addObserver(view.play());
+            gc.addObserver(pl);
+            gc.startGame();
+            
         });
 
     }

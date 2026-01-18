@@ -72,7 +72,7 @@ public class MainView extends JFrame implements Observer
             {
                 add(userView = new UserView(navigator), Screen.User.name());
                 add(menu = new Menu(navigator), Screen.Menu.name());
-                add(play = new GamePanel(), Screen.GameMine.name());
+                add(play = new GamePanel(navigator), Screen.GameMine.name());
 
                 add(new JPanel(new GridBagLayout())
                 {

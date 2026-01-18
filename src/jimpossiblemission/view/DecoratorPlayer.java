@@ -6,8 +6,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.imageio.ImageIO;
 
@@ -15,7 +18,7 @@ import jimpossiblemission.model.game.Direction;
 import jimpossiblemission.model.game.Player;
 import jimpossiblemission.model.game.SpriteAnimation;
 
-public class DecoratorPlayer extends DecoratorObject
+public class DecoratorPlayer extends DecoratorObject 
 {
     // SCREEN SETTINGS
     public final static int originalTileSize = 32;
@@ -43,7 +46,7 @@ public class DecoratorPlayer extends DecoratorObject
         super(gameObject);
 
         var fileEntries = new ArrayList<String>();
-        InputStream inputStream = getClass().getResourceAsStream(path + hitBoxCsv);
+        InputStream inputStream = DecoratorPlayer.class.getResourceAsStream(path + hitBoxCsv);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream)))
         {
 
@@ -117,5 +120,6 @@ public class DecoratorPlayer extends DecoratorObject
         currentSprite = spriteAnimation.get(currentSpriteNumber).getImage();
         return currentSprite;
     }
+
 
 }
