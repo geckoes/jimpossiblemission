@@ -24,29 +24,36 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
 
     private double jump_speed = 15.0;
     private double gravity = 0.5;
-    
+
     private boolean onGround;
-    
-    public Player(double x, double y, double width, double height, double speed) {
+
+    public Player(double x, double y, double width, double height, double speed)
+    {
         super(x, y, width, height);
         this.speed = speed;
         this.onGround = false;
     }
-    public Player(double x, double y, double width, double height) {
+
+    public Player(double x, double y, double width, double height)
+    {
         this(x, y, width, height, INITIAL_SPEED);
     }
-    public void takeDamage() {
+
+    public void takeDamage()
+    {
         isAlive = false;
     }
+
     public boolean isAlive()
     {
         return isAlive;
     }
-    
-    public void setController(GamePlayController gameplayController) {
+
+    public void setController(GamePlayController gameplayController)
+    {
         this.gameplayController = gameplayController;
     }
-    
+
     @Override
     public void update()
     {
@@ -57,11 +64,13 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     @Override
     public void jump()
     {
-        if (onGround) {
+        if (onGround)
+        {
             y += jump_speed;
             onGround = false;
         }
     }
+
     @Override
     public void walk()
     {
@@ -76,7 +85,7 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
                 System.out.println("Player DOWN");
                 direction = "down";
                 isMoving = true;
-                y+= speed;
+                y += speed;
                 break;
             case Direction.LEFT:
                 System.out.println("Player LEFT");
@@ -105,18 +114,22 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
         }
         oldDirection = direction;
     }
-    
-    public Direction getDirection() {
+
+    public Direction getDirection()
+    {
         return gameplayController.getDirection();
     }
+
     @Override
     public void setCollider(ShapeCollider collider)
     {
-       
+
     }
-	@Override
-	public void update(Observable o, Object arg) {
+
+    @Override
+    public void update(Observable o, Object arg)
+    {
         jump();
-        walk();		
-	}
+        walk();
+    }
 }

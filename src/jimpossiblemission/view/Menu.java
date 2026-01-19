@@ -27,6 +27,7 @@ public class Menu extends JPanel implements Observer
     private JLabel name, games, victories;
     private JButton playMine;
     private JButton play;
+    private JButton user;
 
     private Navigator navigator;
 
@@ -61,25 +62,24 @@ public class Menu extends JPanel implements Observer
 
                 constraints.gridy = 1;
 
-                add(new JPanel(new GridLayout(3, 1, 10, 10))
+                add(new JPanel(new GridLayout(3, 1, 20, 10))
                 {
                     {
-                        add(playMine = new JButton("Play Mine")
-                        {
-                            {
-                                addActionListener(e -> navigator.navigate(Screen.GameMine));
-                            }
-                        });
-
                         add(play = new JButton("Play")
                         {
                             {
                                 addActionListener(e -> navigator.navigate(Screen.Game));
                             }
                         });
+                        add(user = new JButton("User")
+                        {
+                            {
+                                addActionListener(e -> navigator.navigate(Screen.User));
+                            }
+                        });
 
                         add(name = Factory.label(""));
-                        add(games = Factory.label("games played: 0"));
+                        add(games = Factory.label("games played: "));
                         add(victories = Factory.label("games won: 0"));
                     }
                 }, constraints);
@@ -108,9 +108,19 @@ public class Menu extends JPanel implements Observer
     }
 
     /**
-     * Updates when notified by Minesweeper.
+     * Returns the user button.
      *
-     * @param o   the Minesweeper
+     * @return the user button
+     */
+    public JButton user()
+    {
+        return user;
+    }
+
+    /**
+     * Updates when notified by Impossible Mission.
+     *
+     * @param o   the Impossible Mission
      * @param arg not relevant
      */
     @Override

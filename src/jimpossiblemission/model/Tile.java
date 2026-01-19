@@ -26,7 +26,7 @@ public class Tile extends Observable
     public final int x, y;
     public final boolean isMine;
     private Visibility visibility = Visibility.Hidden;
-    Optional<Integer> adjacentMines = Optional.empty();
+    public Optional<Integer> adjacentMines = Optional.empty();
 
     /**
      * Class constructor specifying the coordiantes and wether the tile is a mine.
@@ -35,7 +35,7 @@ public class Tile extends Observable
      * @param y      the y coordinate in the grid
      * @param isMine whether the tile is a mine
      */
-    Tile(int x, int y, boolean isMine)
+    public Tile(int x, int y, boolean isMine)
     {
         this.x = x;
         this.y = y;

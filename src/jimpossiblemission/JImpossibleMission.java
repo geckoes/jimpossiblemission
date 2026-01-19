@@ -3,9 +3,9 @@
  */
 package jimpossiblemission;
 
-import jimpossiblemission.controller.Controller;
+import jimpossiblemission.controller.MainController;
 import jimpossiblemission.model.ImpossibleMission;
-import jimpossiblemission.view.View;
+import jimpossiblemission.view.MainView;
 
 /**
  * @author Filippo Taiuti
@@ -19,8 +19,7 @@ public class JImpossibleMission
      */
     public static void main(String[] args)
     {
-//        new MainController(new ImpossibleMission(), new MainView());
-        new Controller(new ImpossibleMission(), new View());
+        new MainController(new ImpossibleMission(), new MainView());
     }
 
 }

@@ -9,7 +9,6 @@ import java.util.Observable;
 
 import javax.swing.Timer;
 
-import jimpossiblemission.model.ImpossibleMission;
 import jimpossiblemission.model.game.GameModel;
 import jimpossiblemission.view.GamePanel;
 
@@ -17,7 +16,6 @@ import jimpossiblemission.view.GamePanel;
  * @author Filippo Taiuti
  *
  */
-@SuppressWarnings("deprecation")
 public class GameController extends Observable
 {
     // FPS
@@ -27,10 +25,10 @@ public class GameController extends Observable
     Timer gameTimer;
 
     /**
-     * @param gm
+     * @param model
      * @param gp
      */
-    public GameController(GameModel gm, GamePanel gp)
+    public GameController(GameModel model, GamePanel gp)
     {
         ActionListener gamePerformer = new ActionListener()
         {
@@ -54,5 +52,4 @@ public class GameController extends Observable
         if (gameTimer != null)
             gameTimer.stop();
     }
-
 }

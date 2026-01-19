@@ -4,6 +4,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagLayout;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
@@ -41,13 +42,15 @@ public class View extends JFrame implements Observer
     private JPanel deck;
     private Menu menu;
     private Play_Mine play;
-    private GamePanel game;
+    private Play game;
     private UserView user;
 
     /**
      * Class constructor. Call
+     * 
+     * @throws IOException
      */
-    public View()
+    public View() throws IOException
     {
         super("Impossible Mission");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,8 +68,8 @@ public class View extends JFrame implements Observer
         {
             {
                 add(menu = new Menu(navigator), Screen.Menu.name());
-                add(play = new Play_Mine(navigator), Screen.GameMine.name());
-                add(game = new GamePanel(navigator), Screen.Game.name());
+                add(play = new Play_Mine(navigator), Screen.Game.name());
+                add(game = new Play(navigator), Screen.Game.name());
 
                 add(new JPanel(new GridBagLayout())
                 {
@@ -129,7 +132,7 @@ public class View extends JFrame implements Observer
      *
      * @return the play panel.
      */
-    public GamePanel play()
+    public Play play()
     {
         return game;
     }

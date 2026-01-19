@@ -14,8 +14,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import jimpossiblemission.model.Game;
-import jimpossiblemission.model.Game.Result;
 import jimpossiblemission.model.Tile;
+import jimpossiblemission.model.Game.Result;
 
 /**
  * The Game class is a view for a Minesweeper game.

@@ -4,15 +4,11 @@
 package jimpossiblemission.view;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
 import javax.swing.JPanel;
-
-import jimpossiblemission.controller.GamePlayController;
-import jimpossiblemission.controller.KeyboardController;
-import jimpossiblemission.model.game.GameModel;
-import jimpossiblemission.model.game.Player;
 
 /**
  * @author Filippo Taiuti
@@ -38,34 +34,31 @@ public class Play extends JPanel implements Observer
 
     /**
      * Class constructor.
+     * 
+     * @throws IOException
      */
-    public Play(Navigator navigator)
+    public Play(Navigator navigator) throws IOException
     {
-    	
+
         setLayout(new BorderLayout());
 
         this.navigator = navigator;
 
-        GameModel model = new GameModel();
-
-        GamePanel gp = new GamePanel(navigator);
-        GamePlayController gpController = new KeyboardController();
-//    gp.addKeyListener(keyController); 
-        Player pl = new Player(playerX, playerY, spriteSize, spriteSize, playerSpeed);
-
-        add(gp);
-    }
-
-    public JPanel gamePanel()
-    {
-        return this;
     }
 
     @Override
     public void update(Observable o, Object arg)
     {
-        System.out.println("test1");
         // TODO Auto-generated method stub
 
+    }
+
+    /**
+     * @return
+     */
+    public void end()
+    {
+        // TODO Auto-generated method stub
+        return;
     }
 }

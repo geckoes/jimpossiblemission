@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import jimpossiblemission.controller.KeyboardController;
 import jimpossiblemission.model.game.Player;
 
 /**
@@ -23,29 +24,24 @@ import jimpossiblemission.model.game.Player;
  *
  */
 @SuppressWarnings("deprecation")
-public class GamePanel extends JPanel implements Observer
+public class Game extends JPanel implements Observer
 {
-    private static final long serialVersionUID = 1L;
-
-    Thread gameThread;
+    KeyboardController keyH = new KeyboardController();
 
     DecoratorPlayer decorationPlayer;
-    Navigator navigator;
-
-    Canvas canvas;
 
     private JLabel time, flags, mines;
+    private Navigator navigator;
+    private Canvas canvas;
     private JButton end;
 
-    public GamePanel(Navigator navigator)
+    /**
+     * @param navigator
+     */
+    public Game(Navigator navigator)
     {
         setLayout(new BorderLayout());
 
-        this.setBackground(Color.black);
-        this.setDoubleBuffered(true);
-        this.setFocusable(true);
-
-        this.navigator = navigator;
         add(new JPanel(new GridBagLayout())
         {
             {
@@ -79,8 +75,15 @@ public class GamePanel extends JPanel implements Observer
                 add(end, constraints);
             }
         }, BorderLayout.NORTH);
+
         add(canvas = new Canvas(), BorderLayout.CENTER);
 
+        this.navigator = navigator;
+
+        this.setBackground(Color.black);
+        this.setDoubleBuffered(true);
+//        this.addKeyListener(keyH);
+        this.setFocusable(true);
     }
 
     public void addPlayer(Player player) throws IOException
@@ -89,28 +92,29 @@ public class GamePanel extends JPanel implements Observer
         // decorationPlayer.addObserver(player);
     }
 
+    /**
+     * Returns the canvas of the game.
+     *
+     * @return the canvas of the game
+     */
+    public Canvas canvas()
+    {
+        return canvas;
+    }
+
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        if (decorationPlayer != null)
-            decorationPlayer.draw(g2);
+        decorationPlayer.draw(g2);
         g2.dispose();
     }
 
     @Override
     public void update(Observable o, Object arg)
     {
+        System.out.println("repaint GamePanel");
         repaint();
-    }
-
-    /**
-     * @return
-     */
-    public Canvas canvas()
-    {
-        // TODO Auto-generated method stub
-        return canvas;
     }
 
 }

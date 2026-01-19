@@ -26,5 +26,5 @@ class Navigator extends Observable
  */
 enum Screen
 {
-    Menu, User, GameMine, Game, Loss, Victory
+    Menu, User, Game, Loss, Victory
 }

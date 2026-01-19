@@ -54,10 +54,10 @@ public class UserView extends JPanel implements Observer
                 add(new JPanel(new GridLayout(3, 1, 10, 10))
                 {
                     {
-                        add(play = new JButton("Play")
+                        add(play = new JButton("Menu")
                         {
                             {
-                                addActionListener(e -> navigator.navigate(Screen.GameMine));
+                                addActionListener(e -> navigator.navigate(Screen.Menu));
                             }
                         });
 

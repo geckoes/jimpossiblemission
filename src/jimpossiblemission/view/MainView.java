@@ -70,9 +70,9 @@ public class MainView extends JFrame implements Observer
         add(deck = new JPanel(new CardLayout())
         {
             {
-                add(userView = new UserView(navigator), Screen.User.name());
                 add(menu = new Menu(navigator), Screen.Menu.name());
-                add(play = new GamePanel(navigator), Screen.GameMine.name());
+                add(userView = new UserView(navigator), Screen.User.name());
+                add(play = new GamePanel(navigator), Screen.Game.name());
 
                 add(new JPanel(new GridBagLayout())
                 {
