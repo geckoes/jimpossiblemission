@@ -37,13 +37,10 @@ public class Play extends JPanel implements Observer
      * 
      * @throws IOException
      */
-    public Play(Navigator navigator) throws IOException
+    public Play(Navigator navigator)
     {
-
         setLayout(new BorderLayout());
-
         this.navigator = navigator;
-
     }
 
     @Override

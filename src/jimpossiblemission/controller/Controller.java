@@ -8,9 +8,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import jimpossiblemission.model.game.GameModel;
+import javax.swing.JFrame;
+
+import jimpossiblemission.model.GameModel;
 import jimpossiblemission.model.game.Player;
 import jimpossiblemission.model.ImpossibleMission;
+import jimpossiblemission.view.MainView;
 import jimpossiblemission.view.View;
 
 /**
@@ -20,60 +23,32 @@ import jimpossiblemission.view.View;
  * 
  */
 @SuppressWarnings("deprecation")
-public class Controller
-{
-    private Optional<ScheduledFuture<?>> timer;
-    private ScheduledExecutorService scheduler;
-    private Optional<jimpossiblemission.model.Game> gameMine;
-
-    /**
-     * Class constructor.
-     */
-    public Controller(ImpossibleMission model, View view)
-    {
-        scheduler = Executors.newScheduledThreadPool(1);
-        model.addObserver(view.menu());
-        model.load();
-
-        view.menu().playMine().addActionListener(e ->
-        {
-        	jimpossiblemission.model.Game game = new jimpossiblemission.model.Game();
-
-            game.addObserver(model);
-            game.addObserver(view.playMine());
-            game.addObserver(view.play());
-            game.start();
-
-            gameMine = Optional.of(game);
-            timer = Optional.of(scheduler.scheduleAtFixedRate(() -> game.update(), 1, 1, TimeUnit.SECONDS));
-        });
-
-        view.playMine().end().addActionListener(e ->
-        {
-            timer.ifPresent(t -> t.cancel(true));
-            gameMine.ifPresent(jimpossiblemission.model.Game::end);
-        });
-
-        view.menu().play().addActionListener(e ->
-        {
-        	Player pl = new Player(0, 0, 0, 0, 0);
-        	try {
-				view.play().addPlayer(pl);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-        	KeyboardController keyb = new KeyboardController();
-//        	pl.setController(keyb);
-        	view.play().addKeyListener(keyb);
-        	GameModel gm = new GameModel();
-        	GameController gc = new GameController(gm, view.play());
-            gc.addObserver(view.play());
-            gc.addObserver(pl);
-            gc.startGame();
-            
-        });
-
+public class Controller {
+	private GameModel model;
+    private MainView view;
+    
+    public Controller(GameModel model) {
+        this.model = model;
     }
-
+    
+    public void setView(MainView view) {
+        this.view = view;
+    }
+    
+    public void moveObject(int dx, int dy) {
+        model.moveObject(dx, dy);
+    }
+    
+    public void switchPanel(String panelName) {
+        model.setCurrentPanel(panelName);
+        view.showPanel(panelName);
+    }
+    
+    public void resetPosition() {
+        model.resetPosition();
+    }
+    
+    public void setRandomPosition() {
+        model.setRandomPosition(400, 400);
+    }
 }

@@ -13,10 +13,16 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+
+import jimpossiblemission.controller.Controller;
+import jimpossiblemission.model.GameModel;
 
 /**
  * Vista principale per il progetto Impossible Mission
@@ -25,174 +31,68 @@ import javax.swing.border.Border;
  */
 
 @SuppressWarnings("deprecation")
-public class MainView extends JFrame implements Observer
+public class MainView extends JFrame
 {
-    static Font FONT = new Font("Cascadia Code", Font.PLAIN, 14);
-    static String LOGO = "https://static.wikia.nocookie.net/logopedia/images/9/98/Minesweeper_1992.png/revision/latest?cb=20220716174154";
-
-    static
-    {
-        UIManager.put("Label.font", FONT);
-        UIManager.put("Label.foreground", Color.DARK_GRAY);
-        UIManager.put("Label.background", Color.WHITE);
-        UIManager.put("Button.font", FONT);
-        UIManager.put("Button.foreground", new Color(224, 49, 49));
-        UIManager.put("Button.background", new Color(255, 201, 201));
-        UIManager.put("Button.highlight", Color.WHITE);
-        UIManager.put("Button.select", Color.WHITE);
-        UIManager.put("Button.focus", Color.WHITE);
-        UIManager.put("Panel.background", new Color(233, 236, 239));
-    }
-
-    private JPanel deck;
-    private JPanel userPanel;
-    private Menu menu;
-    private GamePanel play;
-    private UserView userView;
-
-    /**
-     * Class constructor. Call
-     */
-    public MainView()
-    {
-        super("Impossible Mission");
+	private GameModel model;
+    private Controller controller;
+    private CardLayout cardLayout;
+    private JPanel mainPanel;
+    private Panel1 panel1;
+    
+    public MainView(GameModel model, Controller controller) {
+        this.model = model;
+        this.controller = controller;
+        controller.setView(this);
+        
+        setTitle("Applicazione MVC con Observer");
+        setSize(600, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        try
-        {
-            setIconImage(ImageIO.read(new URL(LOGO)));
-        } catch (Exception e)
-        {
-        }
-
-        Navigator navigator = new Navigator();
-        navigator.addObserver(this);
-
-        add(deck = new JPanel(new CardLayout())
-        {
-            {
-                add(menu = new Menu(navigator), Screen.Menu.name());
-                add(userView = new UserView(navigator), Screen.User.name());
-                add(play = new GamePanel(navigator), Screen.Game.name());
-
-                add(new JPanel(new GridBagLayout())
-                {
-                    {
-                        setBackground(new Color(255, 201, 201));
-                        JButton gameOver = new JButton("Game Over");
-                        gameOver.addActionListener(e -> navigator.navigate(Screen.Menu));
-                        add(gameOver);
-                    }
-                }, Screen.Loss.name());
-
-                add(new JPanel(new GridBagLayout())
-                {
-                    {
-                        setBackground(new Color(178, 242, 187));
-
-                        add(new JButton("Victory")
-                        {
-                            {
-                                setForeground(new Color(47, 158, 68));
-                                setBackground(new Color(178, 242, 187));
-                                addActionListener(e -> navigator.navigate(Screen.Menu));
-                            }
-                        });
-                    }
-                }, Screen.Victory.name());
-            }
-        });
-
-        setSize(740, 500);
         setLocationRelativeTo(null);
-        setVisible(true);
+        
+        createMenuBar();
+        createMainPanel();
+        
+        add(mainPanel);
+    }
+    
+    private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Pannelli");
+        
+        JMenuItem item1 = new JMenuItem("Pannello Gioco");
+        item1.addActionListener(e -> controller.switchPanel("Panel1"));
+        
+        JMenuItem item2 = new JMenuItem("Pannello Info");
+        item2.addActionListener(e -> controller.switchPanel("Panel2"));
+        
+        JMenuItem item3 = new JMenuItem("Pannello Controllo");
+        item3.addActionListener(e -> controller.switchPanel("Panel3"));
+        
+        menu.add(item1);
+        menu.add(item2);
+        menu.add(item3);
+        menuBar.add(menu);
+        setJMenuBar(menuBar);
+    }
+    
+    private void createMainPanel() {
+        cardLayout = new CardLayout();
+        mainPanel = new JPanel(cardLayout);
+        
+        panel1 = new Panel1(model, controller);
+        Panel2 panel2 = new Panel2(model);
+        Panel3 panel3 = new Panel3(model, controller);
+        
+        mainPanel.add(panel2, "Panel2");
+        mainPanel.add(panel1, "Panel1");
+        mainPanel.add(panel3, "Panel3");
+    }
+    
+    public void showPanel(String panelName) {
+        cardLayout.show(mainPanel, panelName);
+        if (panelName.equals("Panel1")) {
+            panel1.requestFocusInWindow();
+        }
     }
 
-    /**
-     * Returns the menu panel.
-     *
-     * @return the menu panel.
-     */
-    public Menu menu()
-    {
-        return menu;
-    }
-
-    /**
-     * Returns the play panel.
-     *
-     * @return the play panel.
-     */
-    public GamePanel play()
-    {
-        return play;
-    }
-
-    /**
-     * Returns the user panel
-     * 
-     * @return the user panel
-     */
-    public UserView userView()
-    {
-        return userView;
-    }
-
-    /**
-     * Updates when notified by a navigator.
-     *
-     * @param o   the navigator
-     * @param arg the screen to navigate to.
-     */
-    @Override
-    public void update(Observable o, Object arg)
-    {
-        if (o instanceof Navigator && arg instanceof Screen screen)
-            ((CardLayout) deck.getLayout()).show(deck, screen.name());
-
-    }
-
-}
-
-/**
- * The Factory class is used to create Swing components.
- *
- * @author Filippo Taiuti
- * @version 1.0
- */
-final class Factory
-{
-    private Factory()
-    {
-    }
-
-    /**
-     * Creates a simple compound border using the specified color.
-     *
-     * @param color the color of the border
-     * @return the simple compound border
-     */
-    static Border border(Color color)
-    {
-        return BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(color),
-                BorderFactory.createEmptyBorder(10, 15, 10, 15));
-    }
-
-    /**
-     * Creates a simple JLabel with the specified text.
-     *
-     * @param text the text of the label
-     * @return the simple JLabel
-     */
-    static JLabel label(String text)
-    {
-        return new JLabel(text)
-        {
-            {
-                setHorizontalAlignment(SwingConstants.CENTER);
-                setOpaque(true);
-                setBackground(Color.WHITE);
-                setBorder(Factory.border(Color.BLACK));
-            }
-        };
-    }
 }
