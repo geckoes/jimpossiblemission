@@ -1,6 +1,3 @@
-/**
- * 
- */
 package jimpossiblemission;
 
 import jimpossiblemission.controller.MainController;
@@ -13,7 +10,6 @@ import jimpossiblemission.view.MainView;
  */
 public class JImpossibleMission
 {
-
     /**
      * @param args
      */

@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package jimpossiblemission.view;
 
 import java.awt.Color;
@@ -12,12 +15,9 @@ import jimpossiblemission.model.Game;
 import jimpossiblemission.model.Tile;
 
 /**
- * The Canvas class is used to draw a Minesweeper game.
+ * @author Filippo Taiuti
  *
- * @author Cicio Ionut
- * @version 1.0
  */
-@SuppressWarnings("deprecation")
 public class Canvas extends JPanel implements Observer
 {
     public static final int SCALE = 30;
@@ -31,7 +31,7 @@ public class Canvas extends JPanel implements Observer
         game.ifPresent(game ->
         {
             g.translate(this.getWidth() / 2 - 5 * SCALE, this.getHeight() / 2 - 5 * SCALE);
-            g.setFont(View.FONT);
+            g.setFont(MainView.FONT);
 
             for (Tile tile : game.tiles)
             {
@@ -65,5 +65,4 @@ public class Canvas extends JPanel implements Observer
         if (o instanceof Game game)
             this.game = arg instanceof Game.Result ? Optional.empty() : Optional.of(game);
     }
-
 }

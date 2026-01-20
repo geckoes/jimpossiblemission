@@ -49,7 +49,8 @@ public class KeyboardController extends GamePlayController implements KeyListene
             currentDirection = Direction.SPACE;
         }
         System.out.println(currentDirection);
-
+        setChanged();
+        notifyObservers(currentDirection);
     }
 
     @Override

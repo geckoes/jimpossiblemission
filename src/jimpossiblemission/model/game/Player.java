@@ -6,6 +6,7 @@ package jimpossiblemission.model.game;
 import java.util.Observable;
 import java.util.Observer;
 
+import jimpossiblemission.controller.GameController;
 import jimpossiblemission.controller.GamePlayController;
 
 /**
@@ -23,20 +24,17 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     protected String direction;
 
     private double jump_speed = 15.0;
-    private double gravity = 0.5;
 
-    private boolean onGround;
-
-    public Player(double x, double y, double width, double height, double speed)
+    public Player(double x, double y, double speed)
     {
-        super(x, y, width, height);
+        super(x, y);
         this.speed = speed;
         this.onGround = false;
     }
 
-    public Player(double x, double y, double width, double height)
+    public Player(double x, double y)
     {
-        this(x, y, width, height, INITIAL_SPEED);
+        this(x, y, INITIAL_SPEED);
     }
 
     public void takeDamage()
@@ -55,18 +53,11 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     }
 
     @Override
-    public void update()
-    {
-        jump();
-        walk();
-    }
-
-    @Override
     public void jump()
     {
         if (onGround)
         {
-            y += jump_speed;
+            y -= jump_speed;
             onGround = false;
         }
     }
@@ -77,31 +68,31 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
         switch (gameplayController.getDirection()) {
             case Direction.UP:
                 System.out.println("Player UP");
-                direction = "up";
+                oldDirection = "up";
                 isMoving = true;
                 y -= speed;
                 break;
             case Direction.DOWN:
                 System.out.println("Player DOWN");
-                direction = "down";
+                oldDirection = "down";
                 isMoving = true;
                 y += speed;
                 break;
             case Direction.LEFT:
                 System.out.println("Player LEFT");
-                direction = "left";
+                oldDirection = "left";
                 isMoving = true;
                 x -= speed;
                 break;
             case Direction.RIGHT:
                 System.out.println("Player RIGHT");
-                direction = "right";
+                oldDirection = "right";
                 isMoving = true;
                 x += speed;
                 break;
             case Direction.SPACE:
                 System.out.println("Player SPACE");
-                direction = "jump";
+                oldDirection = "jump";
                 isMoving = true;
                 jump();
                 x += speed;
@@ -109,10 +100,9 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
             case Direction.NONE:
             default:
                 isMoving = false;
-                direction = "none";
+                oldDirection = "none";
                 break;
         }
-        oldDirection = direction;
     }
 
     public Direction getDirection()
@@ -129,7 +119,12 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     @Override
     public void update(Observable o, Object arg)
     {
-        jump();
-        walk();
+        if (o instanceof GameController)
+        {
+            walk();
+        }
+        gravityY();
+
     }
+
 }

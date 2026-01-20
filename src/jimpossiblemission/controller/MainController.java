@@ -1,5 +1,6 @@
 package jimpossiblemission.controller;
 
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -18,7 +19,6 @@ import jimpossiblemission.view.MainView;
 @SuppressWarnings("deprecation")
 public class MainController
 {
-    private Optional<jimpossiblemission.model.Game> gameMine;
     private Optional<Game> game;
 
     /**
@@ -26,9 +26,12 @@ public class MainController
      */
     public MainController(ImpossibleMission model, MainView view)
     {
+        // observer for user in menu
         model.addObserver(view.menu());
+        // load data from db
         model.load();
 
+        GamePlayController gpc = new KeyboardController();
         view.menu().play().addActionListener(e ->
         {
             GameModel gm = new GameModel();
@@ -36,51 +39,33 @@ public class MainController
             gm.addObserver(model);
             gm.addObserver(view.play());
             gm.addObserver(view.play().canvas());
-            Player pl = new Player(0, 0, 0, 0);
+            Player pl = new Player(0, 0);
+            pl.setController(gpc);
 
             try
             {
                 view.play().addPlayer(pl);
+
             } catch (IOException e1)
+
             {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
-//            gm.addObserver(view.play());
+            gm.addObserver(view.play());
             gm.start();
 
-//            GameController gc = new GameController(gm, view.play());
-//            gc.addObserver(model);
-//            gc.addObserver(view.play());
-//            gc.startGame();
+            GameController gc = new GameController(gm, view.play());
+            gc.addObserver(model);
+            gc.addObserver(view.play());
+            gc.addObserver(pl);
+            gc.startGame();
 
         });
-        view.play().addKeyListener(new KeyboardController());
+        view.play().addKeyListener((KeyListener) gpc);
         view.menu().user().addActionListener(e ->
         {
 
         });
-//        view.play().canvas().addMouseListener(new MouseAdapter()
-//        {
-//            @Override
-//            public void mouseClicked(MouseEvent e)
-//            {
-//                game.ifPresent(game ->
-//                {
-//                    Canvas canvas = view.play().canvas();
-//
-//                    int x = (e.getX() - canvas.getWidth() / 2 + 5 * Canvas.SCALE) / 30;
-//                    int y = (e.getY() - canvas.getHeight() / 2 + 5 * Canvas.SCALE) / 30;
-//
-//                    switch (e.getButton()) {
-//                        case MouseEvent.BUTTON1 -> game.tiles[y * 10 + x].reveal();
-//                        case MouseEvent.BUTTON3 -> game.tiles[y * 10 + x].flag();
-//                        default -> {
-//                        }
-//                    }
-//                });
-//            }
-//        });
 
     }
 

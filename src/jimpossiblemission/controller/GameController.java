@@ -35,7 +35,7 @@ public class GameController extends Observable
             public void actionPerformed(ActionEvent evt)
             {
                 setChanged();
-                notifyObservers("test");
+                notifyObservers();
             }
         };
 

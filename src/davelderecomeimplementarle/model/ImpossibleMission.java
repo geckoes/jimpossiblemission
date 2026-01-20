@@ -1,4 +1,4 @@
-package jimpossiblemission.model;
+package impossiblemission.model;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -7,36 +7,40 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Optional;
 
-/**
- * 
- * 
- * @author Filippo Taiuti
- *
- */
-@SuppressWarnings("deprecation")
 public class ImpossibleMission extends Observable implements Observer
 {
     private static final String DATABASE = "games.db";
-    private User user;
+    private int games = 0, victories = 0;
 
     /**
-     * Loads user stats from file and notifies observers.
+     * Class constructor. Call
+     * 
+     * <pre>
+     * ImpossibleMission::load
+     * </pre>
+     * 
+     * after constructing the object to load stats.
      */
-    @SuppressWarnings("unchecked")
+    public ImpossibleMission()
+    {
+    }
+
+    /**
+     * Loads stats from file and notifies observers.
+     */
     public void load()
     {
         try
         {
             ObjectInputStream stream = new ObjectInputStream(new FileInputStream(DATABASE));
-            user = (User) stream.readObject();
+            this.games = (Integer) stream.readObject();
+            this.victories = (Integer) stream.readObject();
             stream.close();
         } catch (IOException | ClassNotFoundException e)
         {
-            System.out.println(e.getMessage());
-
         }
+
         setChanged();
         notifyObservers();
     }
@@ -46,9 +50,19 @@ public class ImpossibleMission extends Observable implements Observer
      *
      * @return the number of games played
      */
-    public Optional<User> getUSer()
+    public int games()
     {
-        return Optional.ofNullable(user);
+        return games;
+    }
+
+    /**
+     * Returns the number of victories.
+     *
+     * @return the number of victories
+     */
+    public int victories()
+    {
+        return victories;
     }
 
     /**
@@ -57,30 +71,23 @@ public class ImpossibleMission extends Observable implements Observer
      * @param o   the game
      * @param arg the result of the game
      */
-    @Override
     public void update(Observable o, Object arg)
     {
         if (!(o instanceof Game && arg instanceof Game.Result result))
             return;
 
-        if (user == null)
-        {
-            user = new User("John Doe", "avatar0");
-        }
-        user.addGamePlayed();
+        games++;
         if (result == Game.Result.Victory)
-            user.addGamesWon();
-        else
-            user.addGamesLost();
+            victories++;
 
         try
         {
             ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(DATABASE));
-            stream.writeObject(user);
+            stream.writeObject(games);
+            stream.writeObject(victories);
             stream.close();
         } catch (IOException e)
         {
-            System.out.println(e.getMessage());
         }
 
         setChanged();

@@ -14,6 +14,7 @@ import jimpossiblemission.model.game.GameObject;
 public abstract class DecoratorObject
 {
     protected GameObject gameObject;
+    protected double width, height;
 
     public DecoratorObject(GameObject gameObject)
     {

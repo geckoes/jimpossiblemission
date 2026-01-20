@@ -5,7 +5,6 @@ package jimpossiblemission.model.game;
 
 import java.time.Duration;
 import java.util.Observable;
-import java.util.Random;
 
 /**
  * @author Filippo Taiuti
@@ -26,7 +25,6 @@ public class GameModel extends Observable
      */
     public GameModel()
     {
-        Random random = new Random();
 
     }
 
