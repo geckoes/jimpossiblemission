@@ -16,9 +16,8 @@ public abstract class GameObject
     protected double gravity;
 
     /**
-     * Constructor gameObject with initial coordinate passed like parameters
-     * and without gravity (gameobject won't fall).
-     * Gravity can be set when necessary
+     * Constructor gameObject with initial coordinate passed like parameters and
+     * without gravity (gameobject won't fall). Gravity can be set when necessary
      * 
      * @param x initial x coordinate
      * @param y initial y coordinale
@@ -30,12 +29,11 @@ public abstract class GameObject
     }
 
     /**
-     * Constructor gameObject with initial coordinate passed like parameters
-     * and with gravity (gravity have to be a positive value)
+     * Constructor gameObject with initial coordinate passed like parameters and
+     * with gravity (gravity have to be a positive value)
      * 
      * @param x initial x coordinate
-     * @param y initial y coordinale
-     * #param gravity set gravity for the object
+     * @param y initial y coordinale #param gravity set gravity for the object
      */
     public GameObject(double x, double y, double gravity)
     {

@@ -6,7 +6,6 @@ package jimpossiblemission.model.game;
 import java.util.Observable;
 import java.util.Observer;
 
-import jimpossiblemission.controller.GameController;
 import jimpossiblemission.controller.GamePlayController;
 import jimpossiblemission.view.ShapeCollider;
 
@@ -17,7 +16,6 @@ import jimpossiblemission.view.ShapeCollider;
 @SuppressWarnings("deprecation")
 public class Player extends GameObject implements Observer, CanWalk, CanJump, CanCollide
 {
-    private final static double INITIAL_SPEED = 4.0;
     private boolean isAlive = true;
     private double speed;
     GamePlayController gameplayController;
@@ -26,16 +24,12 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
 
     private double jump_speed = 15.0;
 
-    public Player(double x, double y, double speed)
+    public Player(double x, double y, double speed, double gravity)
     {
         super(x, y);
         this.speed = speed;
-        this.onGround = false;
-    }
-
-    public Player(double x, double y)
-    {
-        this(x, y, INITIAL_SPEED);
+        this.onGround = true;
+        this.gravity = gravity;
     }
 
     public void takeDamage()
@@ -56,7 +50,7 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     @Override
     public void jump()
     {
-        if (onGround)
+        if (!onGround)
         {
             y -= jump_speed;
             onGround = false;
@@ -104,6 +98,8 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
                 oldDirection = "none";
                 break;
         }
+        if (!onGround)
+            y += gravity;
     }
 
     public Direction getDirection()
@@ -120,12 +116,7 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     @Override
     public void update(Observable o, Object arg)
     {
-        if (o instanceof GameController)
-        {
-            walk();
-        }
-        gravityY();
-
+        walk();
     }
 
 }

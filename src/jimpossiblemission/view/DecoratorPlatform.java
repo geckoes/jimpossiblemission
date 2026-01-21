@@ -16,16 +16,8 @@ import jimpossiblemission.model.game.Platform;
 import jimpossiblemission.model.game.Player;
 import jimpossiblemission.model.game.SpriteAnimation;
 
-public class DecoratorPlatform extends DecoratorObject 
+public class DecoratorPlatform extends DecoratorObject
 {
-    // SCREEN SETTINGS
-    public final static int originalTileSize = 32;
-    public final static int scale = 4;
-
-    public final static int tileSize = originalTileSize * scale;
-    public final static int spriteSize = originalTileSize * scale;
-
-    String hitBoxCsv;
     List<SpriteAnimation> spriteAnimation = new ArrayList<SpriteAnimation>();
     int spriteSizeX, spriteSizeY;
     int numberOSprite;
@@ -34,6 +26,11 @@ public class DecoratorPlatform extends DecoratorObject
     int delayFrames = 4;
     int tempDelayFrame = 0;
     Image currentSprite;
+
+    int x = (int) gameObject.getX();
+    int y = (int) gameObject.getY();
+    int w = tileSize;
+    int h = tileSize;
 
     /**
      * @param gameObject
@@ -74,10 +71,6 @@ public class DecoratorPlatform extends DecoratorObject
 
     public void draw(Graphics2D g2)
     {
-        int x = (int) gameObject.getX();
-        int y = (int) gameObject.getY();
-        int w = spriteSize;
-        int h = spriteSize;
         if (gameObject.isMoving())
         {
             if (((Player) gameObject).getDirection() == Direction.LEFT)
@@ -118,6 +111,5 @@ public class DecoratorPlatform extends DecoratorObject
         currentSprite = spriteAnimation.get(currentSpriteNumber).getImage();
         return currentSprite;
     }
-
 
 }

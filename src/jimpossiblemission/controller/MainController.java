@@ -40,10 +40,11 @@ public class MainController
             gm.addObserver(model);
             gm.addObserver(view.play());
             gm.addObserver(view.play().canvas());
-            
-            Player pl = new Player(10, 0);
+
+            Player pl = new Player(10, 0, 2d, 0d);
+            pl.setGravity(2d);
             pl.setController(gpc);
-            Platform platform = new Platform(0, 20);
+            Platform platform = new Platform(5, 20);
 
             try
             {
@@ -53,7 +54,6 @@ public class MainController
             {
                 e1.printStackTrace();
             }
-
 
             gm.addObserver(view.play());
             gm.start();

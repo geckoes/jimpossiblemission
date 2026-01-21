@@ -6,11 +6,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.imageio.ImageIO;
 
@@ -18,14 +15,8 @@ import jimpossiblemission.model.game.Direction;
 import jimpossiblemission.model.game.Player;
 import jimpossiblemission.model.game.SpriteAnimation;
 
-public class DecoratorPlayer extends DecoratorObject 
+public class DecoratorPlayer extends DecoratorObject
 {
-    // SCREEN SETTINGS
-    public final static int originalTileSize = 32;
-    public final static int scale = 4;
-
-    public final static int tileSize = originalTileSize * scale;
-    public final static int spriteSize = originalTileSize * scale;
 
     String hitBoxCsv;
     List<SpriteAnimation> spriteAnimation = new ArrayList<SpriteAnimation>();
@@ -33,7 +24,7 @@ public class DecoratorPlayer extends DecoratorObject
     int numberOSprite;
     int offsetX, offsetY;
     int currentSpriteNumber = -1;
-    int delayFrames = 4;
+    int delayFrames = 3;
     int tempDelayFrame = 0;
     Image currentSprite;
 
@@ -78,40 +69,41 @@ public class DecoratorPlayer extends DecoratorObject
     {
         int x = (int) gameObject.getX();
         int y = (int) gameObject.getY();
-        int w = spriteSize;
-        int h = spriteSize;
+        int w = tileSize;
+        int h = tileSize;
+        SpriteAnimation sa;
         if (gameObject.isMoving())
         {
-            if (((Player) gameObject).getDirection() == Direction.LEFT)
-            {
-                x = x + w;
-                w = -w;
-            }
             if (tempDelayFrame >= delayFrames)
             {
-                g2.drawImage(getNext(), x, y, w, h, null);
+                sa = getNext();
                 tempDelayFrame = 0;
             } else
             {
+                sa = getCurrent();
                 tempDelayFrame++;
             }
-            g2.drawImage(getCurrent(), x, y, w, h, null);
+            if (((Player) gameObject).getDirection() == Direction.LEFT)
+            {
+                x = (int) gameObject.getX() + w;
+                w = -w;
+            }
+            g2.drawImage(sa.getImage(), x, y, w, h, null);
         } else
             g2.drawImage(getHold(), x, y, w, h, null);
     }
 
-    public Image getCurrent()
+    public SpriteAnimation getCurrent()
     {
-        return currentSprite;
+        return spriteAnimation.get(currentSpriteNumber);
     }
 
-    public Image getNext()
+    public SpriteAnimation getNext()
     {
         currentSpriteNumber++;
         if (currentSpriteNumber >= spriteAnimation.size())
             currentSpriteNumber = 0;
-        currentSprite = spriteAnimation.get(currentSpriteNumber).getImage();
-        return currentSprite;
+        return spriteAnimation.get(currentSpriteNumber);
     }
 
     public Image getHold()
@@ -120,6 +112,5 @@ public class DecoratorPlayer extends DecoratorObject
         currentSprite = spriteAnimation.get(currentSpriteNumber).getImage();
         return currentSprite;
     }
-
 
 }

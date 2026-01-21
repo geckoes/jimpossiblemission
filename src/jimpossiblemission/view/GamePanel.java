@@ -32,7 +32,7 @@ public class GamePanel extends JPanel implements Observer
 
     DecoratorPlayer decorationPlayer;
     DecoratorPlatform decorationPlatform;
-    
+
     Navigator navigator;
 
     Canvas canvas;
@@ -104,6 +104,8 @@ public class GamePanel extends JPanel implements Observer
         Graphics2D g2 = (Graphics2D) g;
         if (decorationPlayer != null)
             decorationPlayer.draw(g2);
+        if (decorationPlatform != null)
+            decorationPlatform.draw(g2);
         g2.dispose();
     }
 
