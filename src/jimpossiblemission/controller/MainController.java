@@ -7,6 +7,7 @@ import java.util.Optional;
 import jimpossiblemission.model.Game;
 import jimpossiblemission.model.ImpossibleMission;
 import jimpossiblemission.model.game.GameModel;
+import jimpossiblemission.model.game.Platform;
 import jimpossiblemission.model.game.Player;
 import jimpossiblemission.view.MainView;
 
@@ -39,18 +40,21 @@ public class MainController
             gm.addObserver(model);
             gm.addObserver(view.play());
             gm.addObserver(view.play().canvas());
-            Player pl = new Player(0, 0);
+            
+            Player pl = new Player(10, 0);
             pl.setController(gpc);
+            Platform platform = new Platform(0, 20);
 
             try
             {
                 view.play().addPlayer(pl);
-
+                view.play().addPlatform(platform);
             } catch (IOException e1)
-
             {
                 e1.printStackTrace();
             }
+
+
             gm.addObserver(view.play());
             gm.start();
 

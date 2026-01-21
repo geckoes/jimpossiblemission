@@ -1,11 +1,9 @@
-/**
- * 
- */
+
 package jimpossiblemission.model.game;
 
-import jimpossiblemission.view.DecoratorObject;
-
 /**
+ * Abstarct GameObject class: this is the base for all objects in game
+ * 
  * @author Filippo Taiuti
  *
  */
@@ -13,28 +11,40 @@ public abstract class GameObject
 {
     protected double x, y;
     protected boolean active;
-    protected boolean isMoving = false;
+    protected boolean isMoving;
     protected boolean onGround;
     protected double gravity;
 
+    /**
+     * Constructor gameObject with initial coordinate passed like parameters
+     * and without gravity (gameobject won't fall).
+     * Gravity can be set when necessary
+     * 
+     * @param x initial x coordinate
+     * @param y initial y coordinale
+     * 
+     */
     public GameObject(double x, double y)
     {
-        this(x, y, 2d);
+        this(x, y, 0d);
     }
 
+    /**
+     * Constructor gameObject with initial coordinate passed like parameters
+     * and with gravity (gravity have to be a positive value)
+     * 
+     * @param x initial x coordinate
+     * @param y initial y coordinale
+     * #param gravity set gravity for the object
+     */
     public GameObject(double x, double y, double gravity)
     {
         this.x = x;
         this.y = y;
-        this.gravity = gravity;
+        this.gravity = Math.max(0, gravity); // only positive gravity
+        this.isMoving = false;
         this.active = true;
         this.onGround = false;
-    }
-
-    public boolean collision(DecoratorObject otherObj)
-    {
-        return x < otherObj.x + otherObj.width && x + width > otherObj.x && y < otherObj.y + otherObj.height
-                && y + height > otherObj.y;
     }
 
     // Getters and setters
@@ -58,16 +68,6 @@ public abstract class GameObject
         this.y = y;
     }
 
-    public double getWidth()
-    {
-        return width;
-    }
-
-    public double getHeight()
-    {
-        return height;
-    }
-
     public boolean isActive()
     {
         return active;
@@ -78,8 +78,8 @@ public abstract class GameObject
         return isMoving;
     }
 
-    public void gravityY()
+    public void setGravity(double gravity)
     {
-        this.y += gravity;
+        this.gravity += gravity;
     }
 }

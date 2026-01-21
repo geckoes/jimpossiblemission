@@ -8,6 +8,7 @@ import java.util.Observer;
 
 import jimpossiblemission.controller.GameController;
 import jimpossiblemission.controller.GamePlayController;
+import jimpossiblemission.view.ShapeCollider;
 
 /**
  * @author Filippo Taiuti

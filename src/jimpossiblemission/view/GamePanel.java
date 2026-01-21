@@ -16,6 +16,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import jimpossiblemission.model.game.Platform;
 import jimpossiblemission.model.game.Player;
 
 /**
@@ -30,6 +31,8 @@ public class GamePanel extends JPanel implements Observer
     Thread gameThread;
 
     DecoratorPlayer decorationPlayer;
+    DecoratorPlatform decorationPlatform;
+    
     Navigator navigator;
 
     Canvas canvas;
@@ -86,6 +89,12 @@ public class GamePanel extends JPanel implements Observer
     public void addPlayer(Player player) throws IOException
     {
         decorationPlayer = new DecoratorPlayer(player, "hitboxes.csv", "/Sprites/Player/Running/");
+        // decorationPlayer.addObserver(player);
+    }
+
+    public void addPlatform(Platform platform) throws IOException
+    {
+        decorationPlatform = new DecoratorPlatform(platform, "hitboxes.csv", "/Sprites/Levels/LevelTiles/platform/");
         // decorationPlayer.addObserver(player);
     }
 

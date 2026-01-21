@@ -1,4 +1,4 @@
-package impossiblemission;
+package jimpossiblemission;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -27,7 +27,6 @@ public class AudioManager {
 	}
 
 	public void play(String filename) {
-
 		try {
 			InputStream in = new BufferedInputStream(new FileInputStream(filename));
 			AudioInputStream audioIn = AudioSystem.getAudioInputStream(in);

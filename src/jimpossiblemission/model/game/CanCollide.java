@@ -1,7 +1,6 @@
-/**
- * 
- */
 package jimpossiblemission.model.game;
+
+import jimpossiblemission.view.ShapeCollider;
 
 /**
  * @author Filippo Taiuti
@@ -9,5 +8,4 @@ package jimpossiblemission.model.game;
  */
 public interface CanCollide
 {
-    public void setCollider(ShapeCollider collider);
-}
+    public void setCollider(ShapeCollider collider);}

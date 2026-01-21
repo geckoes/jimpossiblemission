@@ -14,13 +14,15 @@ import jimpossiblemission.model.game.GameObject;
 public abstract class DecoratorObject
 {
     protected GameObject gameObject;
-    protected double width, height;
 
     public DecoratorObject(GameObject gameObject)
     {
         this.gameObject = gameObject;
     }
 
+    public GameObject getGameObject() {
+    	return gameObject;
+    }
     public abstract void draw(Graphics2D g);
 
 }
