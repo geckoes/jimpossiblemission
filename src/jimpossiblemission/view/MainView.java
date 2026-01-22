@@ -23,6 +23,7 @@ import javax.swing.UIManager;
 @SuppressWarnings("deprecation")
 public class MainView extends JFrame implements Observer
 {
+    private static final long serialVersionUID = 1L;
     static Font FONT = new Font("Cascadia Code", Font.PLAIN, 14);
     static String LOGO = "https://static.wikia.nocookie.net/logopedia/images/9/98/Minesweeper_1992.png/revision/latest?cb=20220716174154";
 

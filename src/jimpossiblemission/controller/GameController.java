@@ -16,6 +16,7 @@ import jimpossiblemission.view.GamePanel;
  * @author Filippo Taiuti
  *
  */
+@SuppressWarnings("deprecation")
 public class GameController extends Observable
 {
     // FPS

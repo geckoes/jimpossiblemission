@@ -1,7 +1,8 @@
 package jimpossiblemission.view;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,20 +13,21 @@ import java.util.Observable;
 
 import javax.imageio.ImageIO;
 
-import jimpossiblemission.model.game.Direction;
 import jimpossiblemission.model.game.Player;
 import jimpossiblemission.model.game.SpriteAnimation;
+import jimpossiblemission.model.game.controllers.Direction;
 
 public class DecoratorPlayer extends DecoratorObject
 {
-    List<SpriteAnimation> spriteAnimation = new ArrayList<SpriteAnimation>();
-    int spriteSizeX, spriteSizeY;
+    List<SpriteAnimation> spriteRunningAnimation = new ArrayList<SpriteAnimation>();
+    List<SpriteAnimation> spriteSearchingAnimation = new ArrayList<SpriteAnimation>();
+    List<SpriteAnimation> spriteStandingAnimation = new ArrayList<SpriteAnimation>();
+    List<SpriteAnimation> spriteJumpingAnimation = new ArrayList<SpriteAnimation>();
+
     int numberOSprite;
-    int offsetX, offsetY;
     int currentSpriteNumber = 0;
     int delayFrames = 3;
     int tempDelayFrame = 0;
-    Image currentSprite;
 
     /**
      * @param gameObject
@@ -51,12 +53,12 @@ public class DecoratorPlayer extends DecoratorObject
             {
                 String[] fields = entry.split(",");
                 SpriteAnimation sa = new SpriteAnimation();
-                sa.setImage(ImageIO.read(getClass().getResourceAsStream(path + fields[0])));
+                BufferedImage image = ImageIO.read(getClass().getResourceAsStream(path + fields[0]));
+                sa.setImage(image, image.getWidth(null) * scale, image.getHeight(null) * scale);
 
-                BoxCollider sc = new BoxCollider(Integer.valueOf(fields[1]),Integer.valueOf(fields[2]),Integer.valueOf(fields[3]),Integer.valueOf(fields[4]));
-                sa.setShapeCollider(sc);
-                spriteAnimation.add(sa);
+                spriteRunningAnimation.add(sa);
             }
+
         } catch (IOException e)
         {
             throw new IOException(e.getMessage());
@@ -65,10 +67,8 @@ public class DecoratorPlayer extends DecoratorObject
 
     public void draw(Graphics2D g2)
     {
-        int x = (int) gameObject.getX();
-        int y = (int) gameObject.getY();
-        int w = tileSize * scale;
-        int h = tileSize * scale;
+        int x = gameObject.getX();
+        int y = gameObject.getY();
         SpriteAnimation sa;
         if (gameObject.isMoving())
         {
@@ -81,55 +81,45 @@ public class DecoratorPlayer extends DecoratorObject
                 sa = getCurrent();
                 tempDelayFrame++;
             }
+            width = sa.getWidth();
             if (((Player) gameObject).getDirection() == Direction.LEFT)
             {
-                x = (int) gameObject.getX() + w;
-                w = -w;
+                x = (int) gameObject.getX() + width;
+                width = -width;
             }
-            g2.drawImage(sa.getImage(), x, y, w, h, null);
 
-        	setChanged();
-        	notifyObservers(this);
+        } else if (((Player) gameObject).isSearching())
+        {
+            sa = spriteRunningAnimation.get(0);
+            width = sa.getWidth();
+
         } else
-            g2.drawImage(getHold(), x, y, w, h, null);
+        {
+            sa = spriteRunningAnimation.get(0);
+            width = sa.getWidth();
+        }
+        g2.drawImage(sa.getImage(), x, y, width, sa.getHeight(), Color.WHITE, null);
+        setChanged();
+        notifyObservers(this);
+        System.out.println("Player " + gameObject.getX() + " " + gameObject.getY());
     }
 
     public SpriteAnimation getCurrent()
     {
-        return spriteAnimation.get(currentSpriteNumber);
+        return spriteRunningAnimation.get(currentSpriteNumber);
     }
 
     public SpriteAnimation getNext()
     {
         currentSpriteNumber++;
-        if (currentSpriteNumber >= spriteAnimation.size())
+        if (currentSpriteNumber >= spriteRunningAnimation.size())
             currentSpriteNumber = 0;
-        return spriteAnimation.get(currentSpriteNumber);
+        return spriteRunningAnimation.get(currentSpriteNumber);
     }
 
-    public Image getHold()
+    @Override
+    public void update(Observable o, Object arg)
     {
-        currentSpriteNumber = 0;
-        currentSprite = spriteAnimation.get(currentSpriteNumber).getImage();
-        return currentSprite;
     }
-
-	@Override
-	public void update(Observable o, Object arg) {
-	}
-
-	private void updateGeneralPosition(BoxCollider sa) {
-		sa.x = (int) (sa.localX + this.getGameObject().getX());
-		sa.y = (int) (sa.localY + this.getGameObject().getY());
-		sa.w = (int) (sa.localW + this.getGameObject().getX());
-		sa.h = (int) (sa.localH + this.getGameObject().getY());
-	}
-	
-	@Override
-	public ShapeCollider getShapeCollision() {
-		BoxCollider sa =  (BoxCollider) spriteAnimation.get(currentSpriteNumber).getShapeCollider();
-		updateGeneralPosition(sa);
-		return sa;
-	}
 
 }

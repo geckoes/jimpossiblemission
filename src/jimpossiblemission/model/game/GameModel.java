@@ -10,6 +10,7 @@ import java.util.Observable;
  * @author Filippo Taiuti
  *
  */
+@SuppressWarnings("deprecation")
 public class GameModel extends Observable
 {
     public enum Result

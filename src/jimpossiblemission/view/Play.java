@@ -14,6 +14,7 @@ import javax.swing.JPanel;
  * @author Filippo Taiuti
  *
  */
+@SuppressWarnings("deprecation")
 public class Play extends JPanel implements Observer
 {
     // SCREEN SETTINGS

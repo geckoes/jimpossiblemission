@@ -1,32 +1,44 @@
 package jimpossiblemission.view;
 
+import java.awt.Rectangle;
+import java.awt.geom.Area;
+
 /**
+ * BoxCollider creates a Rectangle that can be used to interact to other
+ * Colliders.
+ * 
  * @author Filippo Taiuti
  *
  */
 public class BoxCollider extends ShapeCollider
 {
-    protected int localX, localY, localW, localH;
     protected int x, y, w, h;
 
-    public BoxCollider(int x, int y, int w, int h) {
-    	this.x=x;
-    	localX=x;
-    	this.y=y;
-    	localY=y;
-    	this.w=w;
-    	localW=w;
-    	this.h=h;
-    	localH=h;
+    /**
+     * Constructor creates a rectangle that can be used to bound an object
+     * 
+     * @param x top x
+     * @param y top y
+     * @param w width
+     * @param h height
+     */
+    public BoxCollider(int x, int y, int w, int h)
+    {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
     }
-	@Override
-	public boolean isColliding(ShapeCollider otherObj) {
-		if (otherObj instanceof BoxCollider) {
-			BoxCollider bc = (BoxCollider) otherObj;
-			// controllo che la base dell'otherObj sia all'interno della parte superiore
-			// e che la base sia all'interno dell'altezza della piattaforma
-			
-		}
-		return false;
-	}
+
+    /**
+     * Calculate the area of the boxCollider
+     * 
+     * @return Area
+     */
+    @Override
+    public Area getArea()
+    {
+        Rectangle r = new Rectangle(x, y, w, h);
+        return new Area(r);
+    }
 }

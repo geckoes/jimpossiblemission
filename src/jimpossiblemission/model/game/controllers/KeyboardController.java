@@ -1,12 +1,10 @@
 /**
  * 
  */
-package jimpossiblemission.controller;
+package jimpossiblemission.model.game.controllers;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
-import jimpossiblemission.model.game.Direction;
 
 /**
  * @author Filippo Taiuti
@@ -14,10 +12,6 @@ import jimpossiblemission.model.game.Direction;
  */
 public class KeyboardController extends GamePlayController implements KeyListener
 {
-    public boolean upPressed, downPressed, leftPressed, rightPressed, spacePressed;
-
-    Direction currentDirection = Direction.NONE;
-
     @Override
     public void keyTyped(KeyEvent e)
     {
@@ -46,9 +40,8 @@ public class KeyboardController extends GamePlayController implements KeyListene
         }
         if (code == KeyEvent.VK_SPACE)
         {
-            currentDirection = Direction.SPACE;
+            currentDirection = Direction.JUMP;
         }
-        System.out.println(currentDirection);
         setChanged();
         notifyObservers(currentDirection);
     }

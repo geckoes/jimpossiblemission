@@ -9,11 +9,11 @@ package jimpossiblemission.model.game;
  */
 public abstract class GameObject
 {
-    protected double x, y;
+    protected int x, y;
     protected boolean active;
     protected boolean isMoving;
     protected boolean onGround;
-    protected double gravity;
+    protected int gravity;
 
     /**
      * Constructor gameObject with initial coordinate passed like parameters and
@@ -23,9 +23,9 @@ public abstract class GameObject
      * @param y initial y coordinale
      * 
      */
-    public GameObject(double x, double y)
+    public GameObject(int x, int y)
     {
-        this(x, y, 0d);
+        this(x, y, 0);
     }
 
     /**
@@ -35,7 +35,7 @@ public abstract class GameObject
      * @param x initial x coordinate
      * @param y initial y coordinale #param gravity set gravity for the object
      */
-    public GameObject(double x, double y, double gravity)
+    public GameObject(int x, int y, int gravity)
     {
         this.x = x;
         this.y = y;
@@ -46,22 +46,22 @@ public abstract class GameObject
     }
 
     // Getters and setters
-    public double getX()
+    public int getX()
     {
         return x;
     }
 
-    public void setX(double x)
+    public void setX(int x)
     {
         this.x = x;
     }
 
-    public double getY()
+    public int getY()
     {
         return y;
     }
 
-    public void setY(double y)
+    public void setY(int y)
     {
         this.y = y;
     }
@@ -76,14 +76,18 @@ public abstract class GameObject
         return isMoving;
     }
 
-    public void setGravity(double gravity)
+    public void setGravity(int gravity)
     {
         this.gravity += gravity;
     }
-    public boolean getOnGround() {
-    	return onGround;
+
+    public boolean getOnGround()
+    {
+        return onGround;
     }
-    public void setOnGround(boolean grounded) {
-		onGround = grounded;    	
+
+    public void setOnGround(boolean grounded)
+    {
+        onGround = grounded;
     }
 }

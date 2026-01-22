@@ -6,8 +6,6 @@ package jimpossiblemission.model.game;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 
-import jimpossiblemission.view.ShapeCollider;
-
 /**
  * @author Filippo Taiuti
  *
@@ -16,11 +14,13 @@ import jimpossiblemission.view.ShapeCollider;
 public class SpriteAnimation
 {
     private BufferedImage image;
-    private ShapeCollider sc;
-    
-    public void setImage(BufferedImage image)
+    private int width, height;
+
+    public void setImage(BufferedImage image, int width, int height)
     {
         this.image = image;
+        this.width = width;
+        this.height = height;
     }
 
     /**
@@ -30,11 +30,15 @@ public class SpriteAnimation
     {
         return image;
     }
-	public void setShapeCollider(ShapeCollider sc2) {
-		this.sc = sc2;
-	}
-	public ShapeCollider getShapeCollider() {
-		return sc;
-	}
-    
+
+    public int getWidth()
+    {
+        return width;
+    }
+
+    public int getHeight()
+    {
+        return height;
+    }
+
 }

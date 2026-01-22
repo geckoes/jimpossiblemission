@@ -24,7 +24,6 @@ public class ImpossibleMission extends Observable implements Observer
     /**
      * Loads user stats from file and notifies observers.
      */
-    @SuppressWarnings("unchecked")
     public void load()
     {
         try

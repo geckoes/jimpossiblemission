@@ -97,7 +97,7 @@ public class GamePanel extends JPanel implements Observer
         decoratorPlatform = new DecoratorPlatform(platform, "hitboxes.csv", "/Sprites/Levels/LevelTiles/platform/");
         // decorationPlayer.addObserver(player);
         decoratorPlayer.addObserver(decoratorPlatform);
-        
+
     }
 
     public void paintComponent(Graphics g)

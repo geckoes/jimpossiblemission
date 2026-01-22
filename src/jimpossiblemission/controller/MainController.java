@@ -9,6 +9,8 @@ import jimpossiblemission.model.ImpossibleMission;
 import jimpossiblemission.model.game.GameModel;
 import jimpossiblemission.model.game.Platform;
 import jimpossiblemission.model.game.Player;
+import jimpossiblemission.model.game.controllers.GamePlayController;
+import jimpossiblemission.model.game.controllers.KeyboardController;
 import jimpossiblemission.view.MainView;
 
 /**
@@ -17,7 +19,6 @@ import jimpossiblemission.view.MainView;
  * @author Filippo Taiuti
  * 
  */
-@SuppressWarnings("deprecation")
 public class MainController
 {
     private Optional<Game> game;
@@ -41,8 +42,7 @@ public class MainController
             gm.addObserver(view.play());
             gm.addObserver(view.play().canvas());
 
-            Player pl = new Player(10, 0, 2d, 0d);
-            pl.setGravity(2d);
+            Player pl = new Player(10, 0, 2, 2);
             pl.setController(gpc);
             Platform platform = new Platform(5, 300);
 

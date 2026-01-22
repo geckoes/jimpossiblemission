@@ -1,9 +1,11 @@
 package jimpossiblemission.model.game;
 
-public class Platform extends GameObject {
+public class Platform extends GameObject
+{
 
-	public Platform(double x, double y) {
-		super(x, y);
-	}
+    public Platform(int x, int y)
+    {
+        super(x, y);
+    }
 
 }

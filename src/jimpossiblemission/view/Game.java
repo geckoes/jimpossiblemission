@@ -16,8 +16,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import jimpossiblemission.controller.KeyboardController;
 import jimpossiblemission.model.game.Player;
+import jimpossiblemission.model.game.controllers.KeyboardController;
 
 /**
  * @author Filippo Taiuti

@@ -10,6 +10,7 @@ import java.util.Optional;
  * @author Filippo Taiuti
  *
  */
+@SuppressWarnings("deprecation")
 public class Tile extends Observable
 {
     /**
