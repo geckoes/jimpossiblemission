@@ -80,4 +80,10 @@ public abstract class GameObject
     {
         this.gravity += gravity;
     }
+    public boolean getOnGround() {
+    	return onGround;
+    }
+    public void setOnGround(boolean grounded) {
+		onGround = grounded;    	
+    }
 }

@@ -8,10 +8,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import javax.imageio.ImageIO;
 
 import jimpossiblemission.model.game.Direction;
+import jimpossiblemission.model.game.GameObject;
 import jimpossiblemission.model.game.Platform;
 import jimpossiblemission.model.game.Player;
 import jimpossiblemission.model.game.SpriteAnimation;
@@ -22,14 +24,14 @@ public class DecoratorPlatform extends DecoratorObject
     int spriteSizeX, spriteSizeY;
     int numberOSprite;
     int offsetX, offsetY;
-    int currentSpriteNumber = -1;
+    int currentSpriteNumber = 0;
     int delayFrames = 4;
     int tempDelayFrame = 0;
     Image currentSprite;
 
     int x = (int) gameObject.getX();
     int y = (int) gameObject.getY();
-    int w = tileSize;
+    int w = tileSize * 4;
     int h = tileSize;
 
     /**
@@ -57,10 +59,8 @@ public class DecoratorPlatform extends DecoratorObject
                 String[] fields = entry.split(",");
                 SpriteAnimation sa = new SpriteAnimation();
                 sa.setImage(ImageIO.read(getClass().getResourceAsStream(path + fields[0])));
-                sa.setX(Integer.valueOf(fields[1]));
-                sa.setY(Integer.valueOf(fields[2]));
-                sa.setW(Integer.valueOf(fields[3]));
-                sa.setH(Integer.valueOf(fields[4]));
+                BoxCollider bc = new BoxCollider(Integer.valueOf(fields[1]),  Integer.valueOf(fields[2]),  Integer.valueOf(fields[3]),  Integer.valueOf(fields[4]));
+                sa.setShapeCollider(bc);
                 spriteAnimation.add(sa);
             }
         } catch (IOException e)
@@ -71,7 +71,7 @@ public class DecoratorPlatform extends DecoratorObject
 
     public void draw(Graphics2D g2)
     {
-        if (gameObject.isMoving())
+        if (getGameObject().isMoving())
         {
             if (((Player) gameObject).getDirection() == Direction.LEFT)
             {
@@ -111,5 +111,43 @@ public class DecoratorPlatform extends DecoratorObject
         currentSprite = spriteAnimation.get(currentSpriteNumber).getImage();
         return currentSprite;
     }
+
+	@Override
+	public void update(Observable o, Object arg) {
+		if (o == null || arg == null)
+			return;
+		if (arg instanceof DecoratorObject) {
+			DecoratorObject decObj = (DecoratorObject)arg;
+			ShapeCollider sc = decObj.getShapeCollision();
+			// controllo la collisione con un oggetto
+			if (sc instanceof BoxCollider) {
+				System.out.println("test");
+				BoxCollider bc = (BoxCollider)sc;
+				BoxCollider bcLocal = (BoxCollider)spriteAnimation.get(currentSpriteNumber).getShapeCollider();
+
+				if (bc.h >= bcLocal.x && bc.y <= bcLocal.w)
+					((DecoratorObject) arg).getGameObject().setOnGround(true);
+				else
+					((DecoratorObject) arg).getGameObject().setOnGround(false);
+			}
+			
+			
+		}
+		
+	}
+
+	private void updateGeneralPosition(BoxCollider sa) {
+		sa.x = (int) (sa.localX + this.getGameObject().getX());
+		sa.y = (int) (sa.localY + this.getGameObject().getY());
+		sa.w = (int) (sa.localW + this.getGameObject().getX());
+		sa.h = (int) (sa.localH + this.getGameObject().getY());
+	}
+	
+	@Override
+	public ShapeCollider getShapeCollision() {
+		BoxCollider sa =  (BoxCollider) spriteAnimation.get(currentSpriteNumber).getShapeCollider();
+		updateGeneralPosition(sa);
+		return sa;
+	}
 
 }

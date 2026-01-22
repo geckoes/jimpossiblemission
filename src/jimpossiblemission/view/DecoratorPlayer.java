@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import javax.imageio.ImageIO;
 
@@ -17,13 +18,11 @@ import jimpossiblemission.model.game.SpriteAnimation;
 
 public class DecoratorPlayer extends DecoratorObject
 {
-
-    String hitBoxCsv;
     List<SpriteAnimation> spriteAnimation = new ArrayList<SpriteAnimation>();
     int spriteSizeX, spriteSizeY;
     int numberOSprite;
     int offsetX, offsetY;
-    int currentSpriteNumber = -1;
+    int currentSpriteNumber = 0;
     int delayFrames = 3;
     int tempDelayFrame = 0;
     Image currentSprite;
@@ -53,10 +52,9 @@ public class DecoratorPlayer extends DecoratorObject
                 String[] fields = entry.split(",");
                 SpriteAnimation sa = new SpriteAnimation();
                 sa.setImage(ImageIO.read(getClass().getResourceAsStream(path + fields[0])));
-                sa.setX(Integer.valueOf(fields[1]));
-                sa.setY(Integer.valueOf(fields[2]));
-                sa.setW(Integer.valueOf(fields[3]));
-                sa.setH(Integer.valueOf(fields[4]));
+
+                BoxCollider sc = new BoxCollider(Integer.valueOf(fields[1]),Integer.valueOf(fields[2]),Integer.valueOf(fields[3]),Integer.valueOf(fields[4]));
+                sa.setShapeCollider(sc);
                 spriteAnimation.add(sa);
             }
         } catch (IOException e)
@@ -69,8 +67,8 @@ public class DecoratorPlayer extends DecoratorObject
     {
         int x = (int) gameObject.getX();
         int y = (int) gameObject.getY();
-        int w = tileSize;
-        int h = tileSize;
+        int w = tileSize * scale;
+        int h = tileSize * scale;
         SpriteAnimation sa;
         if (gameObject.isMoving())
         {
@@ -89,6 +87,9 @@ public class DecoratorPlayer extends DecoratorObject
                 w = -w;
             }
             g2.drawImage(sa.getImage(), x, y, w, h, null);
+
+        	setChanged();
+        	notifyObservers(this);
         } else
             g2.drawImage(getHold(), x, y, w, h, null);
     }
@@ -112,5 +113,23 @@ public class DecoratorPlayer extends DecoratorObject
         currentSprite = spriteAnimation.get(currentSpriteNumber).getImage();
         return currentSprite;
     }
+
+	@Override
+	public void update(Observable o, Object arg) {
+	}
+
+	private void updateGeneralPosition(BoxCollider sa) {
+		sa.x = (int) (sa.localX + this.getGameObject().getX());
+		sa.y = (int) (sa.localY + this.getGameObject().getY());
+		sa.w = (int) (sa.localW + this.getGameObject().getX());
+		sa.h = (int) (sa.localH + this.getGameObject().getY());
+	}
+	
+	@Override
+	public ShapeCollider getShapeCollision() {
+		BoxCollider sa =  (BoxCollider) spriteAnimation.get(currentSpriteNumber).getShapeCollider();
+		updateGeneralPosition(sa);
+		return sa;
+	}
 
 }

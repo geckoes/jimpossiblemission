@@ -6,5 +6,6 @@ package jimpossiblemission.view;
  */
 public abstract class ShapeCollider
 {
-    public abstract boolean isColliding(DecoratorObject other);
+    public abstract boolean isColliding(ShapeCollider sc);
+    public ShapeCollider getShapeCollider() { return this; }
 }

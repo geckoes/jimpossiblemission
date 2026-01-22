@@ -14,7 +14,7 @@ import jimpossiblemission.view.ShapeCollider;
  *
  */
 @SuppressWarnings("deprecation")
-public class Player extends GameObject implements Observer, CanWalk, CanJump, CanCollide
+public class Player extends GameObject implements Observer, CanWalk, CanJump, CanFall
 {
     private boolean isAlive = true;
     private double speed;
@@ -28,7 +28,7 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     {
         super(x, y);
         this.speed = speed;
-        this.onGround = true;
+        this.onGround = false;
         this.gravity = gravity;
     }
 
@@ -47,6 +47,10 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
         this.gameplayController = gameplayController;
     }
 
+    @Override
+    public boolean isMoving() {
+    	return super.isMoving() || !onGround;
+    }
     @Override
     public void jump()
     {
@@ -98,8 +102,6 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
                 oldDirection = "none";
                 break;
         }
-        if (!onGround)
-            y += gravity;
     }
 
     public Direction getDirection()
@@ -108,15 +110,16 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     }
 
     @Override
-    public void setCollider(ShapeCollider collider)
-    {
-
-    }
-
-    @Override
     public void update(Observable o, Object arg)
     {
         walk();
+        fall();
     }
+
+	@Override
+	public void fall() {
+        if (!onGround)
+            y += gravity;
+	}
 
 }

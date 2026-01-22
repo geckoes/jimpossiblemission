@@ -44,7 +44,7 @@ public class MainController
             Player pl = new Player(10, 0, 2d, 0d);
             pl.setGravity(2d);
             pl.setController(gpc);
-            Platform platform = new Platform(5, 20);
+            Platform platform = new Platform(5, 300);
 
             try
             {

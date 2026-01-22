@@ -30,8 +30,8 @@ public class GamePanel extends JPanel implements Observer
 
     Thread gameThread;
 
-    DecoratorPlayer decorationPlayer;
-    DecoratorPlatform decorationPlatform;
+    DecoratorPlayer decoratorPlayer;
+    DecoratorPlatform decoratorPlatform;
 
     Navigator navigator;
 
@@ -88,24 +88,26 @@ public class GamePanel extends JPanel implements Observer
 
     public void addPlayer(Player player) throws IOException
     {
-        decorationPlayer = new DecoratorPlayer(player, "hitboxes.csv", "/Sprites/Player/Running/");
+        decoratorPlayer = new DecoratorPlayer(player, "hitboxes.csv", "/Sprites/Player/Running/");
         // decorationPlayer.addObserver(player);
     }
 
     public void addPlatform(Platform platform) throws IOException
     {
-        decorationPlatform = new DecoratorPlatform(platform, "hitboxes.csv", "/Sprites/Levels/LevelTiles/platform/");
+        decoratorPlatform = new DecoratorPlatform(platform, "hitboxes.csv", "/Sprites/Levels/LevelTiles/platform/");
         // decorationPlayer.addObserver(player);
+        decoratorPlayer.addObserver(decoratorPlatform);
+        
     }
 
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        if (decorationPlayer != null)
-            decorationPlayer.draw(g2);
-        if (decorationPlatform != null)
-            decorationPlatform.draw(g2);
+        if (decoratorPlayer != null)
+            decoratorPlayer.draw(g2);
+        if (decoratorPlatform != null)
+            decoratorPlatform.draw(g2);
         g2.dispose();
     }
 
