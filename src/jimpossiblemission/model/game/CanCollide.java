@@ -1,7 +1,5 @@
 package jimpossiblemission.model.game;
 
-import jimpossiblemission.view.ShapeCollider;
-
 /**
  * @author Filippo Taiuti
  *

@@ -45,11 +45,13 @@ public class MainController
             Player pl = new Player(10, 0, 2, 2);
             pl.setController(gpc);
             Platform platform = new Platform(5, 300);
+            Platform platform1 = new Platform(50, 400);
 
             try
             {
                 view.play().addPlayer(pl);
                 view.play().addPlatform(platform);
+//                view.play().addPlatform(platform1);
             } catch (IOException e1)
             {
                 e1.printStackTrace();

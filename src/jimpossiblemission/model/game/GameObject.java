@@ -1,15 +1,20 @@
 
 package jimpossiblemission.model.game;
 
+import java.awt.Point;
+import java.util.Observable;
+
 /**
  * Abstarct GameObject class: this is the base for all objects in game
  * 
  * @author Filippo Taiuti
  *
  */
-public abstract class GameObject
+@SuppressWarnings("deprecation")
+public abstract class GameObject extends Observable
 {
-    protected int x, y;
+    protected int x;
+	protected int y;
     protected boolean active;
     protected boolean isMoving;
     protected boolean onGround;
@@ -46,24 +51,8 @@ public abstract class GameObject
     }
 
     // Getters and setters
-    public int getX()
-    {
-        return x;
-    }
-
-    public void setX(int x)
-    {
-        this.x = x;
-    }
-
-    public int getY()
-    {
-        return y;
-    }
-
-    public void setY(int y)
-    {
-        this.y = y;
+    public Point getScreenPosition() {
+    	return new Point(x,y);
     }
 
     public boolean isActive()
@@ -76,12 +65,7 @@ public abstract class GameObject
         return isMoving;
     }
 
-    public void setGravity(int gravity)
-    {
-        this.gravity += gravity;
-    }
-
-    public boolean getOnGround()
+    public boolean isOnGround()
     {
         return onGround;
     }

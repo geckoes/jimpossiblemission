@@ -13,7 +13,9 @@ import java.util.Observable;
 
 import javax.imageio.ImageIO;
 
+import jimpossiblemission.model.game.BoxCollider;
 import jimpossiblemission.model.game.Player;
+import jimpossiblemission.model.game.ShapeCollider;
 import jimpossiblemission.model.game.SpriteAnimation;
 import jimpossiblemission.model.game.controllers.Direction;
 
@@ -33,36 +35,14 @@ public class DecoratorPlayer extends DecoratorObject
      * @param gameObject
      * @throws IOException
      */
-    public DecoratorPlayer(Player gameObject, String hitBoxCsv, String path) throws IOException
+    public DecoratorPlayer(Player gameObject) throws IOException
     {
         super(gameObject);
 
-        var fileEntries = new ArrayList<String>();
-        InputStream inputStream = DecoratorPlayer.class.getResourceAsStream(path + hitBoxCsv);
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream)))
-        {
-
-            String line;
-            while ((line = br.readLine()) != null)
-            {
-                fileEntries.add(line);
-            }
-            fileEntries.remove(0);
-
-            for (var entry : fileEntries)
-            {
-                String[] fields = entry.split(",");
-                SpriteAnimation sa = new SpriteAnimation();
-                BufferedImage image = ImageIO.read(getClass().getResourceAsStream(path + fields[0]));
-                sa.setImage(image, image.getWidth(null) * scale, image.getHeight(null) * scale);
-
-                spriteRunningAnimation.add(sa);
-            }
-
-        } catch (IOException e)
-        {
-            throw new IOException(e.getMessage());
-        }
+        spriteRunningAnimation = super.createSpriteAnimation("hitboxes.csv", "/Sprites/Player/Running/");
+        spriteSearchingAnimation = super.createSpriteAnimation("hitboxes.csv", "/Sprites/Player/Searching/");
+        spriteStandingAnimation = super.createSpriteAnimation("hitboxes.csv", "/Sprites/Player/Standing/");
+        spriteJumpingAnimation = super.createSpriteAnimation("hitboxes.csv", "/Sprites/Player/Jumping/");
     }
 
     public void draw(Graphics2D g2)
@@ -121,5 +101,6 @@ public class DecoratorPlayer extends DecoratorObject
     public void update(Observable o, Object arg)
     {
     }
+
 
 }

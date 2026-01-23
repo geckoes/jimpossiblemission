@@ -64,6 +64,7 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     {
         if (!onGround)
         {
+            x += speed;
             y -= jump_speed;
             onGround = false;
         }
@@ -73,6 +74,7 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     public void walk()
     {
         isMoving = true;
+        onGround = false;
         switch (gameplayController.getDirection()) {
             case Direction.UP:
                 // search
@@ -94,7 +96,6 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
             case Direction.JUMP:
                 oldDirection = "jump";
                 jump();
-                x += speed;
                 break;
             case Direction.NONE:
             default:
@@ -112,8 +113,8 @@ public class Player extends GameObject implements Observer, CanWalk, CanJump, Ca
     @Override
     public void update(Observable o, Object arg)
     {
-        walk();
-        fall();
+    	walk();
+    	fall();
     }
 
     @Override

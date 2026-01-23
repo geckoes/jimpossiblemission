@@ -14,7 +14,9 @@ import java.util.Observable;
 
 import javax.imageio.ImageIO;
 
+import jimpossiblemission.model.game.BoxCollider;
 import jimpossiblemission.model.game.Platform;
+import jimpossiblemission.model.game.ShapeCollider;
 import jimpossiblemission.model.game.SpriteAnimation;
 
 public class DecoratorPlatform extends DecoratorObject
@@ -53,13 +55,20 @@ public class DecoratorPlatform extends DecoratorObject
                 BufferedImage image = ImageIO.read(getClass().getResourceAsStream(path + fields[0]));
 
                 sa.setImage(image, image.getWidth(null) * scale * 5, image.getHeight(null) * scale);
-
+                BoxCollider bc = new BoxCollider(Integer.valueOf(fields[1]),  Integer.valueOf(fields[2]),  Integer.valueOf(fields[3]),  Integer.valueOf(fields[4]));
+                sa.setShapeCollider(bc);
                 spriteAnimation.add(sa);
             }
         } catch (IOException e)
         {
             throw new IOException(e.getMessage());
         }
+    }
+    
+    public void move() {
+    	gameObject.move();
+    	
+    	
     }
 
     public void draw(Graphics2D g2)
@@ -105,7 +114,26 @@ public class DecoratorPlatform extends DecoratorObject
                 decObj.gameObject.setY(gameObject.getY() - decObj.height + 1);
                 decObj.gameObject.setOnGround(true);
             }
+			ShapeCollider sc = decObj.getShapeCollider();
+			// controllo la collisione con un oggetto
+			if (!decObj.gameObject.isOnGround()) {
+				
+				if (decObj)
+					((DecoratorObject) arg).getGameObject().setOnGround(true);
+			}
         }
     }
 
+	private void updateGeneralPosition(BoxCollider sa) {
+		sa.x = (int) (sa.localX + this.getGameObject().getX());
+		sa.y = (int) (sa.localY + this.getGameObject().getY());
+		sa.w = (int) (sa.localW + this.getGameObject().getX());
+		sa.h = (int) (sa.localH + this.getGameObject().getY());
+	}
+	@Override
+	public ShapeCollider getShapeCollider() {
+		BoxCollider sa =  (BoxCollider) spriteAnimation.get(currentSpriteNumber).getShapeCollider();
+		updateGeneralPosition(sa);
+		return sa;
+	}
 }

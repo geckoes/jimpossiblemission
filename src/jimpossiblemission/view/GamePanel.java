@@ -88,7 +88,7 @@ public class GamePanel extends JPanel implements Observer
 
     public void addPlayer(Player player) throws IOException
     {
-        decoratorPlayer = new DecoratorPlayer(player, "hitboxes.csv", "/Sprites/Player/Running/");
+        decoratorPlayer = new DecoratorPlayer(player);
         // decorationPlayer.addObserver(player);
     }
 
