@@ -1,0 +1,15 @@
+jimpossiblemission
+jimpossiblemission.audio
+jimpossiblemission.controller
+jimpossiblemission.controller.game
+jimpossiblemission.debug
+jimpossiblemission.exception
+jimpossiblemission.model
+jimpossiblemission.model.entity
+jimpossiblemission.model.entity.command
+jimpossiblemission.model.entity.strategy
+jimpossiblemission.model.game
+jimpossiblemission.view
+jimpossiblemission.view.game
+jimpossiblemission.view.gameobject
+jimpossiblemission.view.gameobject.strategy
