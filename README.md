@@ -1,220 +1,168 @@
 # JImpossibleMission
 
-Un videogioco platform 2D in Java ispirato al classico arcade **Impossible Mission** (1984, Epyx).  
-Il giocatore controlla una spia che deve infiltrarsi in un complesso sorvegliato da robot, cercare indizi nascosti nei mobili, hackerare computer e completare la missione prima che sia troppo tardi.
+A 2D platformer in Java, inspired by the 1984 Epyx arcade classic *Impossible Mission*. A spy must infiltrate a robot-guarded complex, search furniture for hidden clues, hack computers, and escape before time runs out.
 
-A 2D platformer game in Java inspired by the classic arcade **Impossible Mission** (1984, Epyx).  
-The player controls a spy who must infiltrate a robot-guarded complex, search furniture for hidden clues, hack computers, and complete the mission before time runs out.
+> Built as an exercise in object-oriented design — the gameplay is the excuse, the architecture is the point.
 
-> Progetto sviluppato per l'esame universitario di Programmazione ad Oggetti.  
-> Project developed for the Object-Oriented Programming university exam.
-
----
-
-## Indice / Table of Contents
-
-- [Panoramica / Overview](#panoramica--overview)
-- [Architettura e Design Pattern / Architecture and Design Patterns](#architettura-e-design-pattern--architecture-and-design-patterns)
-- [Struttura del progetto / Project Structure](#struttura-del-progetto--project-structure)
-- [Gameplay e funzionalita / Gameplay and Features](#gameplay-e-funzionalita--gameplay-and-features)
-- [Tecnologie utilizzate / Technologies Used](#tecnologie-utilizzate--technologies-used)
-- [Come compilare e avviare / How to Build and Run](#come-compilare-e-avviare--how-to-build-and-run)
-- [Documentazione / Documentation](#documentazione--documentation)
-- [Autori / Authors](#autori--authors)
+<p align="center">
+  <img src="screenshots/01-main-menu.png" alt="Main menu" width="420"/>
+</p>
 
 ---
 
-## Panoramica / Overview
+## At a glance
 
-| Aspetto / Aspect | Dettaglio / Detail |
+| | |
 |---|---|
-| **Linguaggio / Language** | Java 8+ |
-| **GUI** | Swing / AWT |
-| **File sorgente / Source files** | 117 classi Java / 117 Java classes (~8.100 righe / ~8,100 lines of code) |
-| **Risorse / Assets** | Sprite, animazioni, effetti audio WAV, livelli in JSON / Sprites, animations, WAV audio effects, JSON-defined levels |
-| **Livelli / Levels** | 15 livelli su 3 piani con ascensori / 15 levels across 3 floors connected by elevators |
-| **Persistenza / Persistence** | Profili utente serializzati su file (`games.db`) / User profiles serialized to file |
-| **Documentazione / Docs** | Javadoc completa in `doc/` / Full Javadoc in `doc/` |
+| Language | Java 21 |
+| GUI | Swing / AWT, custom rendering with `Graphics2D`, `CardLayout` for rooms, `JLayeredPane` for overlays |
+| Game loop | 60 FPS via `javax.swing.Timer` |
+| Codebase | ~117 classes, ~8,100 LOC |
+| Levels | 15 hand-authored levels across 3 floors, defined in JSON (`org.json`) |
+| Persistence | Java serialization (user profiles, stats, rankings) |
+| Audio | WAV samples via `javax.sound.sampled`, pooled with a Flyweight registry |
 
 ---
 
-## Architettura e Design Pattern / Architecture and Design Patterns
+## Why this project is interesting
 
-Il progetto e stato progettato per dimostrare una solida conoscenza dei principi della programmazione ad oggetti e dei design pattern piu comuni. L'architettura complessiva segue il pattern **MVC (Model-View-Controller)** con una netta separazione delle responsabilita.
+Most platformer tutorials end at "moving sprite on a tile map". This project is what happens when you keep going — and treat a small game as a sandbox for the design problems you actually meet in production code:
 
-The project was designed to demonstrate a solid understanding of object-oriented programming principles and commonly used design patterns. The overall architecture follows the **MVC (Model-View-Controller)** pattern with a clear separation of concerns.
+- **Decoupling concerns** so the renderer doesn't know about input and the AI doesn't know about audio.
+- **Making behavior swappable at runtime** (enemy AI) without conditionals branching everywhere.
+- **Adding new entity types** without touching the rendering core (reflection-based view factory).
+- **Modeling state machines** that are easy to reason about and easy to extend.
 
-### Pattern implementati / Implemented Patterns
+The result is a codebase where adding a new enemy, a new collectible, or a new screen is a *small* change in *one* place.
 
-| Pattern | Dove / Where | Scopo / Purpose |
+---
+
+## Architecture
+
+A classic **MVC** split, with `model/`, `view/`, and `controller/` as top-level packages. Full UML diagrams are committed alongside the source:
+
+- [`ImpossibleMission-model.drawio.pdf`](ImpossibleMission-model.drawio.pdf)
+- [`ImpossibleMission-view.drawio.pdf`](ImpossibleMission-view.drawio.pdf)
+- [`ImpossibleMission-controller.drawio.pdf`](ImpossibleMission-controller.drawio.pdf)
+- [`ImpossibleMission-main.drawio.pdf`](ImpossibleMission-main.drawio.pdf)
+
+### Design patterns — where and why
+
+| Pattern | Where | What it buys |
 |---|---|---|
-| **MVC** | `model/`, `view/`, `controller/` | Separazione tra dati, presentazione e controllo / Separation of data, presentation, and control flow |
-| **Observer** | `Game`, `Player`, `Navigator`, `LevelManager`, `AudioManager` | Notifica reattiva dei cambiamenti di stato tra componenti disaccoppiati / Reactive notification of state changes between decoupled components (e.g. Player notifies AudioManager to play sounds) |
-| **Strategy** | `MoveStrategy`, `AttackStrategy` e implementazioni / and implementations | Comportamento nemici intercambiabile a runtime / Swappable enemy behavior at runtime: patrol, follow, electric attack, laser attack |
-| **Command** | `CommandBehaviour`, `InputHandler`, `InputFactory` | Trasformazione input tastiera in comandi eseguibili / Transforms keyboard input into executable command objects, decoupling input from action |
-| **Singleton** | `LevelManager`, `CollisionManager`, `AudioManager` | Accesso globale controllato a risorse condivise / Controlled global access to shared resources |
-| **Factory** | `GameObjectViewFactory`, `SpriteFactory`, `InputFactory` | Creazione di oggetti complessi senza esporre la logica di istanziazione. `GameObjectViewFactory` utilizza la **reflection** per istanziare dinamicamente le view / Complex object creation without exposing instantiation logic. `GameObjectViewFactory` uses **reflection** to dynamically instantiate views matching model objects |
-| **State** | `GameState`, `PlayerState`, `RobotState` | Gestione degli stati tramite enum con transizioni che governano il comportamento / State management via enums with transitions governing game, player, and enemy behavior |
-| **Template Method** | `DynamicObject`, `Enemy` | Scheletro algoritmico nelle classi astratte, dettagli delegati alle sottoclassi / Algorithmic skeleton in abstract classes, implementation details delegated to subclasses |
-| **Marker Interface** | `CanCollide`, `CanFall`, `CanJump` | Interfacce marcatori che dichiarano le capacita degli oggetti / Marker interfaces declaring game object capabilities |
+| **MVC** | top-level packages | Model is pure data + rules; view only renders; controller drives the loop and routes input |
+| **Observer** | `Game`, `Player`, `Navigator`, `LevelManager`, `AudioManager` | Player notifies audio of state changes — no direct coupling. Same mechanism powers UI navigation |
+| **Strategy** | `MoveStrategy`, `AttackStrategy` and implementations | Enemy behavior (patrol, follow, electric attack, laser attack) is composable and swappable at runtime |
+| **Command** | `CommandBehaviour`, `InputHandler`, `InputFactory` | Keyboard input becomes first-class command objects — easy to rebind, queue, or replay |
+| **Factory + Reflection** | `GameObjectViewFactory`, `SpriteFactory`, `InputFactory` | Adding a new model entity doesn't require touching the view layer; the factory resolves the matching view by class name |
+| **Flyweight** | `SpriteFactory` cache, `AudioManager.AudioClipRegistry` | Sprites and audio clips are loaded once and reused — keeps memory flat and stops the GC fight on long sessions |
+| **State** | `GameState`, `PlayerState`, `RobotState` | Explicit enums with transitions — no boolean soup, no hidden modes |
+| **Template Method** | `DynamicObject`, `Enemy` | Shared movement / lifecycle skeleton, subclasses fill in the specifics |
+| **Singleton** | `LevelManager`, `CollisionManager`, `AudioManager` | Controlled global access to genuinely shared, stateful resources |
+| **Marker Interface** | `CanCollide`, `CanFall`, `CanJump` | Capability-style typing — query what an object *can do*, not what it *is* |
 
----
+### A few engineering notes
 
-## Struttura del progetto / Project Structure
+- **`Stream<T>` is used as a real tool**, not a syntactic flourish — filtering active collidables, computing enemy targeting, building rankings, aggregating user statistics, pipelining level objects during load.
+- **Reflection in `GameObjectViewFactory`** resolves the view for any model entity from its class name (`Player` → `PlayerView`, `Robot` → `RobotView`, …). Adding a new entity is a *one-class* change: drop in the model, drop in the matching view, the factory finds it. The same trick is used for attack-strategy views from their interface name.
+- **Generics with a bounded wildcard** — `Level<T extends GameObject>` aggregates heterogeneous entities. Stream pipelines work around runtime type erasure with explicit `instanceof` filters before casting, instead of leaking type knowledge to callers.
+- **Collision detection** is bounding-box (`BoxCollider`) with a single `CollisionManager` arbitrating pairs — keeps per-entity code free of "do I overlap with X?" branching.
+- **Game state machine**: `START → PLAY → (PAUSE | VICTORY | GAMEOVER)`. Transitions are explicit; no scattered booleans.
+- **Persistence** is intentionally simple: profiles serialize to `games.db`. Trade-off chosen consciously — the project is a design showcase, not a database benchmark.
 
-```
-jimpossiblemission/
-├── src/jimpossiblemission/
-│   ├── JImpossibleMission.java          # Entry point
-│   ├── model/
-│   │   ├── ImpossibleMission.java       # Model principale / Main model, user management & persistence
-│   │   ├── User.java                    # Profilo utente con statistiche / User profile with stats
-│   │   ├── game/
-│   │   │   ├── Game.java                # Macchina a stati / Game state machine
-│   │   │   ├── Level.java               # Contenitore GameObjects / Level container
-│   │   │   └── PlayerAnimation.java     # Enum animazioni / Animation enum
-│   │   └── entity/
-│   │       ├── Entity.java              # Classe base astratta / Abstract base class (x, y)
-│   │       ├── GameObject.java          # Base oggetti di gioco / Base for all game objects
-│   │       ├── DynamicObject.java       # Oggetti mobili / Moving objects (speed, direction)
-│   │       ├── Player.java              # Giocatore / Player (lives, jump, damage)
-│   │       ├── Enemy.java / Robot.java  # Nemici con IA / Enemies with configurable AI
-│   │       ├── Platform, Wall, Lift, Elevator  # Elementi livello / Level elements
-│   │       ├── Computer, SuperComputer  # Computer hackerabili / Hackable computers
-│   │       ├── SearchableObject.java    # Mobili con oggetti nascosti / Furniture with hidden items
-│   │       ├── command/                 # Command Pattern per input / for input handling
-│   │       │   ├── CommandBehaviour.java       # Interfaccia funzionale / Functional interface
-│   │       │   ├── MoveLeftCommand, MoveRightCommand, JumpCommand, ...
-│   │       │   ├── InputHandler.java           # Processamento input / Input processing
-│   │       │   └── InputFactory.java           # Mapping input -> comando / input -> command
-│   │       └── strategy/               # Strategy Pattern per nemici / for enemy behavior
-│   │           ├── MoveStrategy.java, AttackStrategy.java
-│   │           ├── PatrolStrategy, FollowStrategy
-│   │           └── ElectricAttackStrategy, LaserAttackStrategy, ...
-│   ├── view/
-│   │   ├── GameMap.java                 # Pannello rendering / Main rendering panel (CardLayout)
-│   │   ├── MenuPanel.java              # Menu principale / Main menu
-│   │   ├── ProfilePanel.java           # Gestione profili / Profile management
-│   │   ├── StatisticPanel.java         # Statistiche / Game statistics
-│   │   ├── RankingPanel.java           # Classifica / Player ranking
-│   │   ├── ComputerPanel.java          # Interfaccia hacking / Hacking interface
-│   │   ├── gameobject/                 # View per ogni entita / View for each game entity
-│   │   │   ├── GameObjectView.java            # View base astratta / Abstract base view
-│   │   │   ├── GameObjectViewFactory.java     # Factory con reflection / Reflection-based factory
-│   │   │   ├── PlayerView, RobotView, ...
-│   │   │   └── strategy/              # Rendering strategie attacco / Attack strategy rendering
-│   │   └── game/                       # Sistema sprite / Sprite system
-│   │       ├── SpriteManager.java, SpriteFactory.java
-│   │       └── PlayerAnimationManager.java
-│   ├── controller/
-│   │   ├── ImpossibleMissionController.java  # Controller principale / Main MVC controller
-│   │   ├── Navigator.java                    # Navigazione schermate / Screen navigation (Observable)
-│   │   └── game/
-│   │       ├── GameController.java      # Game loop 60 FPS
-│   │       ├── GamePlayController.java  # Meccaniche in-game / In-game mechanics
-│   │       ├── LevelManager.java        # Caricamento livelli JSON / JSON level loading (Singleton)
-│   │       ├── CollisionManager.java    # Gestione collisioni / Collision handling (Singleton)
-│   │       ├── KeyboardManager.java     # Routing input / Input routing
-│   │       └── AnimationManager.java    # Cicli animazione / Animation cycles
-│   ├── audio/
-│   │   └── AudioManager.java           # Gestione audio / Audio management (Singleton, Observer)
-│   ├── exception/
-│   │   └── GameObjectViewCreationException.java
-│   └── debug/
-│       └── GameDebug.java
-├── resources/
-│   ├── Sprites/                         # Sprite e animazioni PNG / Sprites and PNG animations
-│   │   ├── Player/                      # 7 stati, ~15-28 frame / 7 states, ~15-28 frames each
-│   │   ├── Levels/LevelTiles/           # Tile piattaforme, ascensori, muri / Platform, lift, wall tiles
-│   │   └── Objects/                     # Badge, computer, mobili (13 tipi) / 13 furniture types
-│   ├── Audio/                           # Effetti sonori e dialoghi WAV / Sound effects and dialogues
-│   ├── Image/                           # Immagini avatar / Avatar images
-│   └── Levels/
-│       └── levels.json                  # Definizione 15 livelli / 15 level definitions
-├── doc/                                 # Javadoc generata / Generated Javadoc
-└── games.db                             # Database profili (runtime) / User profiles (runtime)
-```
+### Measured, not assumed: stream vs `parallelStream`
 
----
+In `CollisionManager`'s platform-overlap query I benchmarked both. With the actual dataset (a few dozen objects per level, lightweight predicate) the sequential stream consistently wins:
 
-## Gameplay e funzionalita / Gameplay and Features
-
-### Meccaniche di gioco / Game Mechanics
-- **Movimento e platforming / Movement and platforming**: corsa, salto, caduta con gravita simulata / running, jumping, falling with simulated gravity
-- **Sistema di vite / Lives system**: 3 vite con animazioni danno e morte / 3 lives with damage and death animations
-- **Esplorazione livelli / Level exploration**: 15 livelli su 3 piani collegati da ascensori / 15 levels across 3 floors connected by elevators
-- **Ricerca oggetti / Object searching**: mobili interattivi (jukebox, libreria, scrivania, frigorifero...) con badge e chiavi nascoste / interactive furniture (jukebox, bookshelf, desk, fridge...) hiding badges and keys
-- **Hacking**: computer e super-computer hackerabili / hackable computers and super-computers
-- **Nemici con IA / Enemies with AI**: robot con comportamenti configurabili tramite Strategy Pattern / robots with configurable behaviors via Strategy Pattern
-  - *Pattugliamento / Patrol*: il robot percorre un percorso predefinito / robot follows a predefined path
-  - *Inseguimento / Follow*: il robot rileva e segue il giocatore / robot detects and chases the player
-  - *Attacchi / Attacks*: scariche elettriche, attacchi temporizzati, raggi laser / electric bolts, timed attacks, laser beams
-
-### Sistema profili utente / User Profile System
-- Creazione profili con avatar personalizzato / Profile creation with custom avatar
-- Statistiche persistenti: partite giocate, vinte, perse, tempo totale, livelli completati / Persistent stats: games played, won, lost, total time, levels completed
-- Classifica globale tra profili / Global ranking across profiles
-- Salvataggio tramite serializzazione Java / Saved via Java serialization
-
-### Comparto audio / Audio System
-- Dialoghi iconici ("Another visitor... Stay a while... Stay forever!") / Iconic dialogues from the original game
-- Effetti sonori per azioni giocatore (passi, salto, morte) / Sound effects for player actions (steps, jump, death)
-- Suoni ambientali per robot, ascensori, esplosioni / Ambient sounds for robots, elevators, explosions
-- Gestione centralizzata tramite AudioManager con pattern Observer / Centralized management via AudioManager with Observer pattern
-
-### Game Loop
-- Ciclo di gioco a **60 FPS** con `javax.swing.Timer` / Game loop at **60 FPS** using `javax.swing.Timer`
-- Macchina a stati / State machine: `START` -> `PLAY` -> `PAUSE` / `VICTORY` / `GAMEOVER`
-- Collisioni basate su bounding box (`BoxCollider`) / Bounding box collision detection (`BoxCollider`)
-
----
-
-## Tecnologie utilizzate / Technologies Used
-
-| Tecnologia / Technology | Utilizzo / Usage |
+| Variant | Range observed (ns) |
 |---|---|
-| **Java 8+** | Linguaggio principale, lambda, stream, interfacce funzionali / Main language, lambdas, streams, functional interfaces |
-| **Swing / AWT** | Framework GUI: JFrame, JPanel, CardLayout, JLayeredPane, Graphics2D |
-| **javax.sound.sampled** | Riproduzione effetti audio WAV / WAV audio playback |
-| **org.json** | Parsing JSON per caricamento livelli / JSON parsing for level loading |
-| **Java Serialization** | Persistenza profili utente / User profile persistence |
-| **Java Reflection** | Istanziazione dinamica view in `GameObjectViewFactory` / Dynamic view instantiation in `GameObjectViewFactory` |
-| **Javadoc** | Documentazione completa API / Full API documentation |
+| `stream()` | ~15,000 – 59,000 |
+| `parallelStream()` | ~70,000 – 91,000 |
+
+For small datasets and cheap predicates, `parallelStream` pays a fork/join setup tax that the workload never amortizes. Sequential was kept; the experiment is left documented so the choice is *visible*, not folklore.
 
 ---
 
-## Come compilare e avviare / How to Build and Run
+## Gameplay highlights
 
-### Prerequisiti / Prerequisites
-- JDK 8 o superiore / JDK 8 or higher
-- Libreria / Library [`json-20251224.jar`](https://github.com/stleary/JSON-java) (org.json)
+- Running, jumping, falling with simulated gravity
+- 3 lives, damage and death animations
+- 15 rooms across 3 floors, connected by floor-elevators and intra-room lifts
+- Interactive furniture (jukebox, bookshelf, desk, fridge, …) hiding three kinds of badges: `lift_reset`, `block_enemy`, `hacker_key`
+- Hackable computers (consume badges to pause enemies or reset lifts) and a final super-computer to complete the mission
+- Two enemy archetypes with composable AI:
+  - **Robot** — `patrol` or `watch` movement, paired with `laser`, `electric`, or `electric-timed` attack
+  - **Big Bomb** — `follow` movement, contact attack
+- Temporary enemy lockdown ("zZz" state) consuming a `block_enemy` badge
+- Iconic audio cues from the original (*"Another visitor… Stay a while… Stay forever!"*)
+- Persistent user profiles with custom avatar, stats, and a cross-profile ranking
 
-### Da terminale / From terminal
+### Screenshots
+
+<p align="center">
+  <img src="screenshots/02-profile-create.png" width="260" alt="Profile creation"/>
+  <img src="screenshots/03-profile-manager.png" width="320" alt="Profile manager"/>
+</p>
+<p align="center">
+  <img src="screenshots/04-statistics.png" width="220" alt="Player statistics"/>
+  <img src="screenshots/05-ranking.png" width="360" alt="Cross-profile ranking"/>
+</p>
+
+In-game HUD — lives, current level, and the three badge counters:
+
+<p align="center">
+  <img src="screenshots/06-hud.png" width="640" alt="In-game HUD"/>
+</p>
+
+A laser-equipped patrol robot, the hacking interaction, and an enemy temporarily disabled by a `block_enemy` badge:
+
+<p align="center">
+  <img src="screenshots/07-gameplay-laser.png" width="200" alt="Robot laser attack"/>
+  <img src="screenshots/09-hacking.png" width="200" alt="Hacking a computer"/>
+  <img src="screenshots/10-enemy-blocked.png" width="200" alt="Blocked enemy"/>
+</p>
+
+---
+
+## Build & run
+
+**Requirements:** JDK 8 or higher · [`json-20251224.jar`](https://github.com/stleary/JSON-java) on the classpath.
 
 ```bash
-# Compilazione / Compile
-javac -cp lib/json-20251224.jar -d bin -sourcepath src src/jimpossiblemission/JImpossibleMission.java
+# Compile
+javac -cp lib/json-20251224.jar -d bin -sourcepath src \
+      src/jimpossiblemission/JImpossibleMission.java
 
-# Esecuzione / Run
-java -cp bin:lib/json-20251224.jar:resources jimpossiblemission.JImpossibleMission
+# Run
+java -cp bin:lib/json-20251224.jar:resources \
+     jimpossiblemission.JImpossibleMission
 ```
 
-### Da IDE / From IDE
-Importare il progetto in Eclipse (o altro IDE Java), aggiungere `json-20251224.jar` al classpath e avviare `JImpossibleMission`.
-
-Import the project into Eclipse (or any Java IDE), add `json-20251224.jar` to the classpath, and run `JImpossibleMission`.
+From any Java IDE: import the project, add `json-20251224.jar` to the classpath, run `JImpossibleMission`.
 
 ---
 
-## Documentazione / Documentation
+## API documentation
 
-La documentazione Javadoc completa e disponibile nella cartella [`doc/`](doc/). Ogni classe pubblica e documentata con descrizione, parametri e valori di ritorno. I file `package-info.java` forniscono una panoramica per ciascun package.
-
-Full Javadoc documentation is available in the [`doc/`](doc/) folder. Every public class is documented with descriptions, parameters, and return values. Each package includes a `package-info.java` file providing a package-level overview.
+Full Javadoc lives in [`doc/`](doc/). Every public class is documented; each package ships a `package-info.java` overview.
 
 ---
 
-## Autori / Authors
+## What's next
 
-- **Filippo Taiuti** - Sviluppo principale / Main developer
-- **Cicio Ionut** - Contributi al Navigator e componenti aggiuntive / Contributions to Navigator and additional components
+A short list of extensions the architecture is already shaped to absorb cheaply:
+
+- **JSON level validation** (and ideally a TDD harness around it) so authoring new rooms can't silently break the game.
+- **Non-rectangular colliders** — adding `CircleCollider` next to `BoxCollider` without touching `CollisionManager`. The interface is there; the geometry isn't yet.
+- **New attack effects** — drop in a new `AttackStrategy` + matching `AttackStrategyView`. Reflection picks it up.
+- **New enemy AIs** — register new `MoveStrategy` / `AttackStrategy` in the respective factories.
+- **More rooms** — purely data: edit `levels.json`, no code changes.
+
+---
+
+## Credits
+
+- **Filippo Taiuti** — design and implementation (individual project).
+- **Cicio Ionut** — author of the `Navigator` component, adapted here from his *Minesweeper* tutorial; the user-profile serialization approach also took inspiration from the same tutorial.
+
+Original *Impossible Mission* is © Epyx, 1984. This is a non-commercial homage built for learning.
